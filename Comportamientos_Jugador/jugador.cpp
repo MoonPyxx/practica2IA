@@ -126,6 +126,7 @@ void ComportamientoJugador::VisualizaPlan(const stateN0 &st, const list<Action> 
 		case actWALK:
 			cst.jugador = NextCasilla(cst.jugador);
 			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
+			break;
 		case actTURN_SR:
 			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 1) % 8);
 			break;
