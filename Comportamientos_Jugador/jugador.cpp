@@ -81,7 +81,6 @@ stateN0 apply(const Action &a, const stateN0 &st, const vector<vector<unsigned c
 	return st_result;
 }
 
-// SEGUNDA APROXIMACION
 void AnulaMatriz(vector<vector<unsigned char>> &matriz)
 {
 	for (int i = 0; i < matriz.size(); i++)
@@ -149,6 +148,15 @@ void ComportamientoJugador::VisualizaPlan(const stateN0 &st, const list<Action> 
 		it++;
 	}
 }
+bool Find(const stateN0 &item, const list<stateN0> &lista)
+{
+	auto it = lista.begin();
+	while (it != lista.end() and !((*it) == item))
+		it++;
+
+	return (!(it == lista.end()));
+}
+ // sobrecargar
 bool Find(const stateN0 &item, const list<nodeN0> &lista)
 {
 	auto it = lista.begin();
