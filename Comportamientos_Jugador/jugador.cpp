@@ -136,7 +136,7 @@ void ComportamientoJugador::VisualizaPlan(const stateN0 &st, const list<Action> 
 		case act_CLB_WALK:
 			cst.colaborador = NextCasilla(cst.colaborador);
 			cst.ultimaOrdenColaborador = act_CLB_WALK;
-			mapaConPlan[cst.jugador.f][cst.jugador.c] = 2;
+			mapaConPlan[cst.colaborador.f][cst.colaborador.c] = 2;
 			break;
 		case act_CLB_TURN_SR:
 			cst.colaborador.brujula = (Orientacion)((cst.colaborador.brujula + 1) % 8);
