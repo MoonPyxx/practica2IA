@@ -48,7 +48,7 @@ ubicacion NextCasilla(const ubicacion &pos)
 	}
 	return next;
 }
-
+// NIVEL 0
 stateN0 apply(const Action &a, const stateN0 &st, const vector<vector<unsigned char>> mapa)
 {
 	stateN0 st_result = st;
@@ -214,7 +214,6 @@ void PintaPlan(const list<Action> &plan)
 	}
 	cout << " (" << plan.size() << " acciones)" << endl;
 }
-// NIVEL 0
 list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
 {
 	nodeN0 current_node;
@@ -302,156 +301,374 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 }
 
 // NIVEL 1
-bool esVisible(Sensores sensores) {
-    for (char agente : sensores.agentes) {
-        if (agente == 'c') {
-            return true;  
-        }
-    }
-    return false; 
+bool ColaboradorVisible(ubicacion &j, ubicacion &c)
+{
+	switch (j.brujula)
+	{
+	case norte:
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case este:
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case sur:
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		break;
+	case oeste:
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		break;
+	case noroeste:
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		break;
+	case noreste:
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case sureste:
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		break;
+	case suroeste:
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		break;
+	}
 }
 stateN0 aplicarAccionColaborador(stateN0 estadoActual, Action accion, const vector<vector<unsigned char>> &mapa)
 {
 
 	return estadoActual; // Retorna el nuevo estado
 }
-/*list<Action> guiarColaborador(const stateN0 &inicio, const ubicacion &destino, const vector<vector<unsigned char>> &mapa)
+list<Action> AnchuraNivel1(const stateN0 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa, Sensores sensores)
 {
-	list<Action> plan;
-	set<stateN0> explored;
-	list<stateN0> frontier;
 	nodeN0 current_node;
+	list<nodeN0> frontier;
+	set<nodeN0> explored;
+	list<Action> plan;
+	current_node.st = inicio;
+	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
+	frontier.push_back(current_node);
 
-	// current_node.st = inicio;
-	bool SolutionFound = (current_node.st.jugador.f == destino.f && current_node.st.jugador.c == destino.c);
-	frontier.push_back(inicio);
-
-	while (!frontier.empty())
+	while (!frontier.empty() && !SolutionFound)
 	{
-		stateN0 actual = frontier.front();
 		frontier.pop_front();
-		if (actual.colaborador == destino)
+		explored.insert(current_node);
+
+		// Comprobar si el colaborador está en el campo de visión del jugador
+		if (!esVisible(sensores))
 		{
-			// return reconstruirCamino(actual);
+			// Programar acciones del jugador
+			// Generar Hijo actWALK
+			nodeN0 child_walk = current_node;
+			child_walk.st = apply(actWALK, current_node.st, mapa);
+			child_walk.secuencia.push_back(actWALK);
+			if (explored.find(child_walk) == explored.end())
+			{
+				frontier.push_back(child_walk);
+			}
+
+			// Generar hijo actRUN
+			nodeN0 child_run = current_node;
+			child_run.st = apply(actRUN, current_node.st, mapa);
+			child_run.secuencia.push_back(actRUN);
+			if (explored.find(child_run) == explored.end())
+			{
+				frontier.push_back(child_run);
+			}
+
+			// Generar hijo actTURN_L
+			nodeN0 child_turnl = current_node;
+			child_turnl.st = apply(actTURN_L, current_node.st, mapa);
+			child_turnl.secuencia.push_back(actTURN_L);
+			if (explored.find(child_turnl) == explored.end())
+			{
+				frontier.push_back(child_turnl);
+			}
+
+			// Generar hijo actTURN_SR
+			nodeN0 child_turnsr = current_node;
+			child_turnsr.st = apply(actTURN_SR, current_node.st, mapa);
+			child_turnsr.secuencia.push_back(actTURN_SR);
+			if (explored.find(child_turnsr) == explored.end())
+			{
+				frontier.push_back(child_turnsr);
+			}
 		}
-		explored.insert(actual);
-		for (Action accion : {act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP})
+		else
 		{
-			if (esVisible(actual.jugador,actual.colaborador,actual.jugador.brujula)){
-				stateN0 nuevoEstado = aplicarAccionColaborador(actual, accion, mapa);
-				if (explored.find(nuevoEstado) == explored.end())
-				{
-					frontier.push_back(nuevoEstado);
-				}
+			// Programar acciones del colaborador
+			// Generar Hijo actCLB_WALK
+			nodeN0 child_clbwalk = current_node;
+			child_clbwalk.st = apply(act_CLB_WALK, current_node.st, mapa);
+			child_clbwalk.secuencia.push_back(act_CLB_WALK);
+			if (child_clbwalk.st.colaborador.f == final.f and child_clbwalk.st.colaborador.c == final.c)
+			{
+				current_node = child_clbwalk;
+				SolutionFound = true;
+			}
+			else if (explored.find(child_clbwalk) == explored.end())
+			{
+				frontier.push_back(child_clbwalk);
+			}
+			// Generar hijo actCLB_TURN_SR
+			nodeN0 child_clbturnsr = current_node;
+			child_clbturnsr.st = apply(act_CLB_TURN_SR, current_node.st, mapa);
+			child_clbturnsr.secuencia.push_back(act_CLB_TURN_SR);
+			if (explored.find(child_clbturnsr) == explored.end())
+			{
+				frontier.push_back(child_clbturnsr);
+			}
+		}
+
+		if (!SolutionFound && !frontier.empty())
+		{
+			current_node = frontier.front();
+			while (!frontier.empty() and explored.find(current_node) != explored.end())
+			{
+				frontier.pop_front();
+				if (!frontier.empty())
+					current_node = frontier.front();
 			}
 		}
 	}
 
-	return {};
-	
-}
-*/
-list<Action> AnchuraNivel1(const stateN0 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa, Sensores sensores)
-{
-    nodeN0 current_node;
-    list<nodeN0> frontier;
-    set<nodeN0> explored;
-    list<Action> plan;
-    current_node.st = inicio;
-    bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
-    frontier.push_back(current_node);
+	if (SolutionFound)
+	{
+		plan = current_node.secuencia;
+		cout << "Encontrado un plan: ";
+		PintaPlan(current_node.secuencia);
+	}
 
-    while (!frontier.empty() && !SolutionFound)
-    {
-        frontier.pop_front();
-        explored.insert(current_node);
-
-        // Comprobar si el colaborador está en el campo de visión del jugador
-        if (!esVisible(sensores))
-        {
-            // Programar acciones del jugador
-            // Generar Hijo actWALK
-            nodeN0 child_walk = current_node;
-            child_walk.st = apply(actWALK, current_node.st, mapa);
-            child_walk.secuencia.push_back(actWALK);
-            if (explored.find(child_walk) == explored.end())
-            {
-                frontier.push_back(child_walk);
-            }
-
-            // Generar hijo actRUN
-            nodeN0 child_run = current_node;
-            child_run.st = apply(actRUN, current_node.st, mapa);
-            child_run.secuencia.push_back(actRUN);
-            if (explored.find(child_run) == explored.end())
-            {
-                frontier.push_back(child_run);
-            }
-
-            // Generar hijo actTURN_L
-            nodeN0 child_turnl = current_node;
-            child_turnl.st = apply(actTURN_L, current_node.st, mapa);
-            child_turnl.secuencia.push_back(actTURN_L);
-            if (explored.find(child_turnl) == explored.end())
-            {
-                frontier.push_back(child_turnl);
-            }
-
-            // Generar hijo actTURN_SR
-            nodeN0 child_turnsr = current_node;
-            child_turnsr.st = apply(actTURN_SR, current_node.st, mapa);
-            child_turnsr.secuencia.push_back(actTURN_SR);
-            if (explored.find(child_turnsr) == explored.end())
-            {
-                frontier.push_back(child_turnsr);
-            }
-        }
-        else
-        {
-            // Programar acciones del colaborador
-            // Generar Hijo actCLB_WALK
-            nodeN0 child_clbwalk = current_node;
-            child_clbwalk.st = apply(act_CLB_WALK, current_node.st, mapa);
-            child_clbwalk.secuencia.push_back(act_CLB_WALK);
-            if (child_clbwalk.st.colaborador.f == final.f and child_clbwalk.st.colaborador.c == final.c)
-            {
-                current_node = child_clbwalk;
-                SolutionFound = true;
-            }
-            else if (explored.find(child_clbwalk) == explored.end())
-            {
-                frontier.push_back(child_clbwalk);
-            }
-            // Generar hijo actCLB_TURN_SR
-            nodeN0 child_clbturnsr = current_node;
-            child_clbturnsr.st = apply(act_CLB_TURN_SR, current_node.st, mapa);
-            child_clbturnsr.secuencia.push_back(act_CLB_TURN_SR);
-            if (explored.find(child_clbturnsr) == explored.end())
-            {
-                frontier.push_back(child_clbturnsr);
-            }
-        }
-
-        if (!SolutionFound && !frontier.empty())
-        {
-            current_node = frontier.front();
-            while (!frontier.empty() and explored.find(current_node) != explored.end())
-            {
-                frontier.pop_front();
-                if (!frontier.empty())
-                    current_node = frontier.front();
-            }
-        }
-    }
-
-    if (SolutionFound)
-    {
-        plan = current_node.secuencia;
-        cout << "Encontrado un plan: ";
-        PintaPlan(current_node.secuencia);
-    }
-
-    return plan;
+	return plan;
 }
 void crearCurrentState(const Sensores &sensores, stateN0 &c_state)
 {
@@ -484,9 +701,12 @@ Action ComportamientoJugador::think(Sensores sensores)
 				break;
 			case 1:
 				cout << "Nivel 1" << endl;
-				if(esVisible(sensores)){
-					cout << "El colaborador es visible" << endl; 
-				} else{
+				if (esVisible(sensores))
+				{
+					cout << "El colaborador es visible" << endl;
+				}
+				else
+				{
 					cout << "El colaborador no es visible" << endl;
 				}
 				plan = AnchuraNivel1(c_state, goal, mapaResultado, sensores);

@@ -22,18 +22,6 @@ struct stateN0
       return false;
     }
   }
- /* bool operator<(const stateN0 &y) const
-  {
-    if (jugador.f < y.jugador.f)
-      return true;
-    else if (jugador.f == y.jugador.f && jugador.c < y.jugador.c)
-      return true;
-    else if (jugador.f == y.jugador.f && jugador.c == y.jugador.c && jugador.brujula < y.jugador.brujula)
-      return true;
-    else
-      return false;
-  }
-  */
 };
 struct nodeN0
 {
@@ -55,7 +43,47 @@ struct nodeN0
       return false;
   }
 };
+struct stateN1 
+{
+  ubicacion jugador;
+  ubicacion colaborador;
+  Action ultimaOrdenColaborador;
 
+  bool operator==(const stateN1 &x) const
+  {
+    if (jugador == x.jugador and colaborador.f == x.colaborador.f and colaborador.c == x.colaborador.c)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+};  
+struct nodeN1{
+  stateN1 st;
+  list<Action> secuencia;
+  bool operator==(const nodeN1 &n) const
+  {
+    return (st == n.st);
+  }
+  bool operator<(const nodeN1 &b) const
+  {
+    if (st.jugador.f < b.st.jugador.f)
+      return true;
+    else if (st.jugador.f == b.st.jugador.f && st.jugador.c < b.st.jugador.c)
+      return true;
+    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula)
+      return true;
+    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula && st.colaborador.f < b.st.jugador.f)
+      return true;
+    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula && st.colaborador.f == b.st.jugador.f && st.colaborador.c < b.st.colaborador.c)
+      return true;    
+    else
+      return false;
+  }
+};
 class ComportamientoJugador : public Comportamiento
 {
 public:
