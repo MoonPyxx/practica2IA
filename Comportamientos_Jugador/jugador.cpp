@@ -242,6 +242,18 @@ bool Find(const stateN1 &item, const list<stateN1> &lista)
 
 	return (!(it == lista.end()));
 }
+bool Find(const stateN1 &item, const set<nodeN1> &conjunto)
+{
+	for (const auto &elem : conjunto)
+	{
+		if (elem.st == item)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void PintaPlan(const list<Action> &plan)
 {
 	auto it = plan.begin();
@@ -301,7 +313,6 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 	{
 		frontier.pop_front();
 		explored.insert(current_node);
-
 		// Generar Hijo actWALK
 		nodeN0 child_walk = current_node;
 		child_walk.st = apply(actWALK, current_node.st, mapa);
@@ -372,7 +383,6 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 
 	return plan;
 }
-
 // NIVEL 1
 bool ColaboradorVisible(ubicacion &j, ubicacion &c)
 {
@@ -680,162 +690,158 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 	}
 	return st_result;
 }
-
-list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa, Sensores sensores)
+// Funcion para programar accion jugador
+nodeN1 programarAccionJugador(const Action &action, nodeN1 &actual, const vector<vector<unsigned char>> &mapa)
 {
-	nodeN1 current_node;
-	list<nodeN1> frontier;
-	set<nodeN1> explored;
-	list<Action> plan;
-	current_node.st = inicio;
-	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
-	frontier.push_back(current_node);
+	nodeN1 nuevo = actual;						 // Creación del nuevo nodo como copia del actual
+	nuevo.st = applyN1(action, actual.st, mapa); // Aplicar la acción al estado
 
-	while (!frontier.empty() && !SolutionFound)
+	// Verificar si la acción fue válida
+	if (!(nuevo.st == actual.st))
 	{
-		frontier.pop_front();
-		explored.insert(current_node);
-
-		// Comprobar si el colaborador está en el campo de visión del jugador
-		if (ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
+		// Si el colaborador no estaba detenido, aplicar su última acción
+		if (actual.st.ultimaOrdenColaborador != act_CLB_STOP)
 		{
-			// Generar Hijo(s) colaborador
-
-			// Generar Hijo actCLB_WALK
-			nodeN1 child_clbwalk = current_node;
-			child_clbwalk.st = applyN1(act_CLB_WALK, current_node.st, mapa);
-			child_clbwalk.secuencia.push_back(act_CLB_WALK);
-			if (child_clbwalk.st.colaborador.f == final.f and child_clbwalk.st.colaborador.c == final.c)
-			{
-				current_node = child_clbwalk;
-				SolutionFound = true;
-			}
-			else if (explored.find(child_clbwalk) == explored.end())
-			{
-				frontier.push_back(child_clbwalk);
-			}
-			if (!SolutionFound)
-			{
-				// Generar hijo actCLB_TURN_SR
-				nodeN1 child_clbturnsr = current_node;
-				child_clbturnsr.st = applyN1(act_CLB_TURN_SR, current_node.st, mapa);
-				child_clbturnsr.secuencia.push_back(act_CLB_TURN_SR);
-				if (explored.find(child_clbturnsr) == explored.end())
-				{
-					frontier.push_back(child_clbturnsr);
-				}
-			}
-		}
-		// Si no ve al colaborador, generar hijos jugador
-		if (!SolutionFound)
-		{
-			// Generar Hijo actWALK
-			nodeN1 child_walk = current_node;
-			child_walk.st = applyN1(actWALK, current_node.st, mapa);
-			child_walk.secuencia.push_back(actWALK);
-			if (explored.find(child_walk) == explored.end())
-			{
-				frontier.push_back(child_walk);
-			}
-			// Generar hijo actRUN
-			nodeN1 child_run = current_node;
-			child_run.st = applyN1(actRUN, current_node.st, mapa);
-			child_run.secuencia.push_back(actRUN);
-			if (explored.find(child_run) == explored.end())
-			{
-				frontier.push_back(child_run);
-			}
-
-			// Generar hijo actTURN_L
-			nodeN1 child_turnl = current_node;
-			child_turnl.st = applyN1(actTURN_L, current_node.st, mapa);
-			child_turnl.secuencia.push_back(actTURN_L);
-			if (explored.find(child_turnl) == explored.end())
-			{
-				frontier.push_back(child_turnl);
-			}
-
-			// Generar hijo actTURN_SR
-			nodeN1 child_turnsr = current_node;
-			child_turnsr.st = applyN1(actTURN_SR, current_node.st, mapa);
-			child_turnsr.secuencia.push_back(actTURN_SR);
-			if (explored.find(child_turnsr) == explored.end())
-			{
-				frontier.push_back(child_turnsr);
-			}
-		}
-
-		if (!SolutionFound && !frontier.empty())
-		{
-			current_node = frontier.front();
-			while (!frontier.empty() and explored.find(current_node) != explored.end())
-			{
-				frontier.pop_front();
-				if (!frontier.empty())
-					current_node = frontier.front();
-			}
+			nuevo.st = applyN1(actual.st.ultimaOrdenColaborador, nuevo.st, mapa);
+			actual.secuencia.push_back(action);
+			return nuevo;
 		}
 	}
+	return actual; // Devolver el estado original si la acción no cambió el estado
+}
+void programarAccionesJugador(nodeN1 &actual, const ubicacion &final, const vector<vector<unsigned char>> &mapa, list<nodeN1> &frontera)
+{
+	// Acciones posibles del jugador
+	vector<Action> acciones = {actRUN, actWALK, actTURN_L, actTURN_SR};
 
-	if (SolutionFound)
+	for (auto accion : acciones)
 	{
-		plan = current_node.secuencia;
-		cout << "Encontrado un plan: ";
-		PintaPlan(current_node.secuencia);
+		nodeN1 nuevo = programarAccionJugador(accion, actual, mapa);
+
+		// Comprobar si el objetivo se ha conseguido
+		if (nuevo.st.jugador.f == final.f && nuevo.st.jugador.c == final.c)
+		{
+			frontera.push_back(nuevo); // Añadir el nuevo estado a la frontera
+			return;					   // Terminar ya que se alcanzó el objetivo
+		}
+
+		// Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
+		if (!(nuevo.st == actual.st))
+		{ // Solo añadir si el estado es diferente al actual
+			frontera.push_back(nuevo);
+		}
+	}
+}
+
+nodeN1 programarAccionColaborador(const Action &action, nodeN1 &actual, const vector<vector<unsigned char>> &mapa)
+{
+	nodeN1 nuevo = actual; // Creación del nuevo nodo como copia del actual
+	if (action == actual.st.ultimaOrdenColaborador)
+	{
+		// Si la acción es la misma que la última acción del colaborador, aplicar una acción de inactividad del jugador
+		nuevo = programarAccionJugador(actIDLE, nuevo, mapa); // Suponiendo que actIDLE es una acción que no modifica el estado
+				nuevo.st.ultimaOrdenColaborador = action; // Actualizar la última orden del colaborador
+
+	}
+	else
+	{
+		// Aplicar la acción del colaborador
+		nuevo.st = applyN1(action, nuevo.st, mapa);
+		nuevo.st.ultimaOrdenColaborador = action; // Actualizar la última orden del colaborador
 	}
 
-	return plan;
+	// Verificar si la acción fue válida
+	if (!(nuevo.st == actual.st))
+	{
+		actual.secuencia.push_back(action);
+		return nuevo;
+	}
+	return actual; // Devolver el estado original si la acción no cambió el estado
 }
-void crearCurrentState(const Sensores &sensores, stateN0 &c_state)
-{
-	c_state.jugador.f = sensores.posF;
-	c_state.jugador.c = sensores.posC;
-	c_state.jugador.brujula = sensores.sentido;
-	c_state.colaborador.f = sensores.CLBposF;
-	c_state.colaborador.c = sensores.CLBposC;
-	c_state.colaborador.brujula = sensores.CLBsentido;
+
+list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa) {
+    list<nodeN1> frontier;
+    set<nodeN1> explored;
+    list<Action> plan;
+    nodeN1 current_node;
+    current_node.st = inicio;
+    frontier.push_back(current_node);
+
+    while (!frontier.empty()) {
+        current_node = frontier.front();
+        frontier.pop_front();
+
+        // Comprobar si se ha alcanzado la solución
+        if (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c) {
+            plan = current_node.secuencia;
+            cout << "Plan encontrado con " << plan.size() << " acciones." << endl;
+            return plan;  // Solución encontrada
+        }
+
+        // Insertar en explorados si no ha sido explorado antes
+        if (explored.find(current_node) != explored.end()) {
+            continue;  // Nodo ya explorado
+        }
+        explored.insert(current_node);
+
+        // Generar hijos basado en la visibilidad del colaborador
+        if (!ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador)) {
+			cout << "Colaborador no visible" << endl;
+            vector<Action> acciones = {actWALK, actRUN, actTURN_L, actTURN_SR};
+            for (auto accion : acciones) {
+                nodeN1 hijo = programarAccionJugador(accion, current_node, mapa);
+                if (!(hijo.st == current_node.st)) {  // Comprobar si el estado ha cambiado
+                    frontier.push_back(hijo);
+                }
+            }
+        } else {
+			cout <<"Colaborador visible " << endl;
+            vector<Action> accionesColab = {act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP};
+            for (auto accion : accionesColab) {
+                nodeN1 hijo = programarAccionColaborador(accion, current_node, mapa);
+                if (!(hijo.st == current_node.st)) {  // Comprobar si el estado ha cambiado
+                    frontier.push_back(hijo);
+                }
+            }
+        }
+    }
+
+    cout << "No se encontró un plan." << endl;
+    return list<Action>();  // Retornar lista vacía si no se encuentra solución
 }
-void crearCurrentStateN1(const Sensores &sensores, stateN1 &c_state)
-{
-	c_state.jugador.f = sensores.posF;
-	c_state.jugador.c = sensores.posC;
-	c_state.jugador.brujula = sensores.sentido;
-	c_state.colaborador.f = sensores.CLBposF;
-	c_state.colaborador.c = sensores.CLBposC;
-	c_state.colaborador.brujula = sensores.CLBsentido;
-}
+
+
 // Este es el método principal que se piden en la practica.
 // Tiene como entrada la información de los sensores y devuelve la acción a realizar.
 // Para ver los distintos sensores mirar fichero "comportamiento.hpp"
 Action ComportamientoJugador::think(Sensores sensores)
 {
+
 	Action accion = actIDLE;
 	if (sensores.nivel != 4)
 	{
 		if (!hayPlan)
 		{
-			cout << "Calculamos un plan" << endl;
-			crearCurrentState(sensores, c_state);
-			crearCurrentStateN1(sensores, c_state1);
+			jugador.f = sensores.posF;
+			jugador.c = sensores.posC;
+			jugador.brujula = sensores.sentido;
+			colaborador.f = sensores.CLBposF;
+			colaborador.c = sensores.CLBposC;
+			colaborador.brujula = sensores.CLBsentido;
 			goal.f = sensores.destinoF;
 			goal.c = sensores.destinoC;
 
 			switch (sensores.nivel)
 			{
 			case 0:
+				c_state.jugador = jugador;
+				c_state.colaborador = colaborador;
 				plan = AnchuraSoloJugador(c_state, goal, mapaResultado);
 				break;
 			case 1:
-				cout << "Nivel 1" << endl;
-				if (ColaboradorVisible(c_state.jugador, c_state.colaborador))
-				{
-					cout << "El colaborador es visible" << endl;
-				}
-				else
-				{
-					cout << "El colaborador no es visible" << endl;
-				}
-				 plan = AnchuraNivel1(c_state1, goal, mapaResultado, sensores);
+				c_state1.jugador = jugador;
+				c_state1.colaborador = colaborador;
+				plan = AnchuraNivel1(c_state1, goal, mapaResultado);
 				break;
 			case 2:
 				cout << "Nivel 2" << endl;

@@ -108,7 +108,7 @@ private:
   // Declarar Variables de Estado
   list<Action> plan;
   bool hayPlan;
-  ubicacion goal;
+  ubicacion goal, jugador, colaborador;
   stateN0 c_state;
   stateN1 c_state1;
 };
