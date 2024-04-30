@@ -386,267 +386,48 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 // NIVEL 1
 bool ColaboradorVisible(ubicacion &j, ubicacion &c)
 {
-	switch (j.brujula)
-	{
-	case norte:
-		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
-			return true;
-		break;
-	case este:
-		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
-			return true;
-		break;
-	case sur:
-		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
-			return true;
-		break;
-	case oeste:
-		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
-			return true;
-		break;
-	case noroeste:
-		if ((j.f) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c) == c.c)
-			return true;
-		break;
-	case noreste:
-		if ((j.f - 1) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 3) == c.c)
-			return true;
-		break;
-	case sureste:
-		if ((j.f) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c) == c.c)
-			return true;
-		break;
-	case suroeste:
-		if ((j.f + 1) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
-			return true;
-		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
-			return true;
-		if ((j.f) == c.f && (j.c - 3) == c.c)
-			return true;
-		break;
-	}
-	return false;
+    int fila_inicio, fila_fin, col_inicio, col_fin;
+
+    switch (j.brujula)
+    {
+    case norte:
+        fila_inicio = -3; fila_fin = -1; col_inicio = -3; col_fin = 3;
+        break;
+    case este:
+        fila_inicio = -3; fila_fin = 3; col_inicio = 1; col_fin = 3;
+        break;
+    case sur:
+        fila_inicio = 1; fila_fin = 3; col_inicio = -3; col_fin = 3;
+        break;
+    case oeste:
+        fila_inicio = -3; fila_fin = 3; col_inicio = -3; col_fin = -1;
+        break;
+    case noroeste:
+        fila_inicio = -3; fila_fin = 0; col_inicio = -3; col_fin = 0;
+        break;
+    case noreste:
+        fila_inicio = -3; fila_fin = 0; col_inicio = 0; col_fin = 3;
+        break;
+    case sureste:
+        fila_inicio = 0; fila_fin = 3; col_inicio = 0; col_fin = 3;
+        break;
+    case suroeste:
+        fila_inicio = 0; fila_fin = 3; col_inicio = -3; col_fin = 0;
+        break;
+    }
+
+    for (int fila = fila_inicio; fila <= fila_fin; fila++)
+    {
+        for (int col = col_inicio; col <= col_fin; col++)
+        {
+            if ((j.f + fila) == c.f && (j.c + col) == c.c)
+                return true;
+        }
+    }
+
+    return false;
 }
+
 stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa)
 {
 	stateN1 st_result = st;
@@ -786,7 +567,6 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 
         // Generar hijos basado en la visibilidad del colaborador
         if (!ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador)) {
-			cout << "Colaborador no visible" << endl;
             vector<Action> acciones = {actWALK, actRUN, actTURN_L, actTURN_SR};
             for (auto accion : acciones) {
                 nodeN1 hijo = programarAccionJugador(accion, current_node, mapa);
@@ -795,7 +575,6 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
                 }
             }
         } else {
-			cout <<"Colaborador visible " << endl;
             vector<Action> accionesColab = {act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP};
             for (auto accion : accionesColab) {
                 nodeN1 hijo = programarAccionColaborador(accion, current_node, mapa);
