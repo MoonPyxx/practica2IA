@@ -562,15 +562,55 @@ bool ColaboradorVisible(ubicacion &j, ubicacion &c)
 			return true;
 		break;
 	}
+	return false;
 }
-stateN0 aplicarAccionColaborador(stateN0 estadoActual, Action accion, const vector<vector<unsigned char>> &mapa)
+stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa)
 {
-
-	return estadoActual; // Retorna el nuevo estado
+	stateN1 st_result = st;
+	ubicacion sig_ubicacion, sig_ubicacion2;
+	switch (a)
+	{
+	case actWALK: // si prox casilla es transitable y no está ocupada por el colaborador
+		sig_ubicacion = NextCasilla(st.jugador);
+		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.colaborador.f and sig_ubicacion.c == st.colaborador.c))
+		{
+			st_result.jugador = sig_ubicacion;
+		}
+		break;
+	case actRUN: // si prox 2 casillas son transitables y no están ocupadas por el colaborador
+		sig_ubicacion = NextCasilla(st.jugador);
+		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.colaborador.f and sig_ubicacion.c == st.colaborador.c))
+		{
+			sig_ubicacion2 = NextCasilla(sig_ubicacion);
+			if (casillaTransitable(sig_ubicacion2, mapa) and !(sig_ubicacion2.f == st.colaborador.f and sig_ubicacion2.c == st.colaborador.c))
+			{
+				st_result.jugador = sig_ubicacion2;
+			}
+		}
+		break;
+	case actTURN_L:
+		st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 6) % 8);
+		break;
+	case actTURN_SR:
+		st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 1) % 8);
+		break;
+	case act_CLB_WALK:
+		sig_ubicacion = NextCasilla(st.colaborador);
+		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.jugador.f and sig_ubicacion.c == st.jugador.c))
+		{
+			st_result.jugador = sig_ubicacion;
+		}
+		break;
+	case act_CLB_TURN_SR:
+		st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
+		break;
+	}
+	return st_result;
 }
+
 list<Action> AnchuraNivel1(const stateN0 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa, Sensores sensores)
 {
-	nodeN0 current_node;
+/*	nodeN0 current_node;
 	list<nodeN0> frontier;
 	set<nodeN0> explored;
 	list<Action> plan;
@@ -584,7 +624,7 @@ list<Action> AnchuraNivel1(const stateN0 &inicio, const ubicacion &final, const 
 		explored.insert(current_node);
 
 		// Comprobar si el colaborador está en el campo de visión del jugador
-		if (!esVisible(sensores))
+		if (!ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
 		{
 			// Programar acciones del jugador
 			// Generar Hijo actWALK
@@ -669,6 +709,7 @@ list<Action> AnchuraNivel1(const stateN0 &inicio, const ubicacion &final, const 
 	}
 
 	return plan;
+	*/
 }
 void crearCurrentState(const Sensores &sensores, stateN0 &c_state)
 {
@@ -701,7 +742,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 				break;
 			case 1:
 				cout << "Nivel 1" << endl;
-				if (esVisible(sensores))
+				if (ColaboradorVisible(c_state.jugador, c_state.colaborador))
 				{
 					cout << "El colaborador es visible" << endl;
 				}
@@ -709,7 +750,8 @@ Action ComportamientoJugador::think(Sensores sensores)
 				{
 					cout << "El colaborador no es visible" << endl;
 				}
-				plan = AnchuraNivel1(c_state, goal, mapaResultado, sensores);
+				// plan = AnchuraNivel1(c_state, goal, mapaResultado, sensores);
+				plan = {};
 				break;
 			case 2:
 				cout << "Nivel 2" << endl;
