@@ -102,6 +102,7 @@ public:
   Action think(Sensores sensores);
   int interact(Action accion, int valor);
   void VisualizaPlan(const stateN0 &st, const list<Action> &plan);
+  void VisualizaPlanN1(const stateN1 &st, const list<Action> &plan);
 
 private:
   // Declarar Variables de Estado
@@ -109,6 +110,7 @@ private:
   bool hayPlan;
   ubicacion goal;
   stateN0 c_state;
+  stateN1 c_state1;
 };
 
 #endif
