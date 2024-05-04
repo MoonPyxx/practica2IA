@@ -206,53 +206,6 @@ void ComportamientoJugador::VisualizaPlanN1(const stateN1 &st, const list<Action
 		it++;
 	}
 }
-// FIND nivel 0
-bool Find(const stateN0 &item, const list<stateN0> &lista)
-{
-	auto it = lista.begin();
-	while (it != lista.end() and !((*it) == item))
-		it++;
-
-	return (!(it == lista.end()));
-}
-// sobrecargar
-bool Find(const stateN0 &item, const list<nodeN0> &lista)
-{
-	auto it = lista.begin();
-	while (it != lista.end() && !(it->st == item))
-	{
-		it++;
-	}
-	return (!(it == lista.end()));
-}
-// FIND NIVEL 1
-bool Find(const stateN1 &item, const list<nodeN1> &lista)
-{
-	auto it = lista.begin();
-	while (it != lista.end() and !(it->st == item))
-		it++;
-
-	return (!(it == lista.end()));
-}
-bool Find(const stateN1 &item, const list<stateN1> &lista)
-{
-	auto it = lista.begin();
-	while (it != lista.end() and !((*it) == item))
-		it++;
-
-	return (!(it == lista.end()));
-}
-bool Find(const stateN1 &item, const set<nodeN1> &conjunto)
-{
-	for (const auto &elem : conjunto)
-	{
-		if (elem.st == item)
-		{
-			return true;
-		}
-	}
-	return false;
-}
 
 void PintaPlan(const list<Action> &plan)
 {
