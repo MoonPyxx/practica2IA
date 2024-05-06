@@ -339,46 +339,70 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 // NIVEL 1
 bool ColaboradorVisible(ubicacion &j, ubicacion &c)
 {
-    int fila_inicio, fila_fin, col_inicio, col_fin;
+	int fila_inicio, fila_fin, col_inicio, col_fin;
 
-    switch (j.brujula)
-    {
-    case norte:
-        fila_inicio = -3; fila_fin = -1; col_inicio = -3; col_fin = 3;
-        break;
-    case este:
-        fila_inicio = -3; fila_fin = 3; col_inicio = 1; col_fin = 3;
-        break;
-    case sur:
-        fila_inicio = 1; fila_fin = 3; col_inicio = -3; col_fin = 3;
-        break;
-    case oeste:
-        fila_inicio = -3; fila_fin = 3; col_inicio = -3; col_fin = -1;
-        break;
-    case noroeste:
-        fila_inicio = -3; fila_fin = 0; col_inicio = -3; col_fin = 0;
-        break;
-    case noreste:
-        fila_inicio = -3; fila_fin = 0; col_inicio = 0; col_fin = 3;
-        break;
-    case sureste:
-        fila_inicio = 0; fila_fin = 3; col_inicio = 0; col_fin = 3;
-        break;
-    case suroeste:
-        fila_inicio = 0; fila_fin = 3; col_inicio = -3; col_fin = 0;
-        break;
-    }
+	switch (j.brujula)
+	{
+	case norte:
+		fila_inicio = -3;
+		fila_fin = -1;
+		col_inicio = -3;
+		col_fin = 3;
+		break;
+	case este:
+		fila_inicio = -3;
+		fila_fin = 3;
+		col_inicio = 1;
+		col_fin = 3;
+		break;
+	case sur:
+		fila_inicio = 1;
+		fila_fin = 3;
+		col_inicio = -3;
+		col_fin = 3;
+		break;
+	case oeste:
+		fila_inicio = -3;
+		fila_fin = 3;
+		col_inicio = -3;
+		col_fin = -1;
+		break;
+	case noroeste:
+		fila_inicio = -3;
+		fila_fin = 0;
+		col_inicio = -3;
+		col_fin = 0;
+		break;
+	case noreste:
+		fila_inicio = -3;
+		fila_fin = 0;
+		col_inicio = 0;
+		col_fin = 3;
+		break;
+	case sureste:
+		fila_inicio = 0;
+		fila_fin = 3;
+		col_inicio = 0;
+		col_fin = 3;
+		break;
+	case suroeste:
+		fila_inicio = 0;
+		fila_fin = 3;
+		col_inicio = -3;
+		col_fin = 0;
+		break;
+	}
 
-    for (int fila = fila_inicio; fila <= fila_fin; fila++)
-    {
-        for (int col = col_inicio; col <= col_fin; col++)
-        {
-            if ((j.f + fila) == c.f && (j.c + col) == c.c)
-                return true;
-        }
-    }
+	for (int fila = fila_inicio; fila <= fila_fin; fila++)
+	{
+		for (int col = col_inicio; col <= col_fin; col++)
+		{
+			if ((j.f + fila) == c.f && (j.c + col) == c.c)
+				return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa)
@@ -406,7 +430,7 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		}
 		break;
 	case actIDLE:
-	break;
+		break;
 	case actTURN_L:
 		st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 6) % 8);
 		break;
@@ -424,305 +448,88 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
 		break;
 	}
-	if(a!=act_CLB_WALK && a!=act_CLB_TURN_SR && a!=act_CLB_STOP){
-		switch(st.ultimaOrdenColaborador){
-			case act_CLB_WALK:
-				sig_ubicacion = NextCasilla(st.colaborador);
-				if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.jugador.f and sig_ubicacion.c == st.jugador.c))
-				{
-					st_result.colaborador = sig_ubicacion;
-				}
-				break;
-			case act_CLB_TURN_SR:
-				st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
-				break;
+	if (a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
+	{
+		switch (st.ultimaOrdenColaborador)
+		{
+		case act_CLB_WALK:
+			sig_ubicacion = NextCasilla(st.colaborador);
+			if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.jugador.f and sig_ubicacion.c == st.jugador.c))
+			{
+				st_result.colaborador = sig_ubicacion;
+			}
+			break;
+		case act_CLB_TURN_SR:
+			st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
+			break;
 		}
 	}
 	return st_result;
 }
- /* FUNCIONES PSEUDOCODIGO 
-// Funcion para programar accion jugador
-nodeN1 programarAccionJugador(const Action &action, nodeN1 &actual, const vector<vector<unsigned char>> &mapa)
-{
-	nodeN1 nuevo = actual;						 // Creación del nuevo nodo como copia del actual
-	nuevo.st = applyN1(action, actual.st, mapa); // Aplicar la acción al estado
-
-	// Verificar si la acción fue válida
-	if (!(nuevo.st == actual.st))
-	{
-		// Si el colaborador no estaba detenido, aplicar su última acción
-		if (actual.st.ultimaOrdenColaborador != act_CLB_STOP)
-		{
-			nuevo.st = applyN1(actual.st.ultimaOrdenColaborador, nuevo.st, mapa);
-			actual.secuencia.push_back(action);
-			return nuevo;
-		}
-	}
-	return actual; // Devolver el estado original si la acción no cambió el estado
-}
-void programarAccionesJugador(nodeN1 &actual, const ubicacion &final, const vector<vector<unsigned char>> &mapa, list<nodeN1> &frontera)
-{
-	// Acciones posibles del jugador
-	vector<Action> acciones = {actRUN, actWALK, actTURN_L, actTURN_SR};
-
-	for (auto accion : acciones)
-	{
-		nodeN1 nuevo = programarAccionJugador(accion, actual, mapa);
-
-		// Comprobar si el objetivo se ha conseguido
-		if (nuevo.st.colaborador.f == final.f && nuevo.st.colaborador.c == final.c)
-		{
-			frontera.push_back(nuevo); // Añadir el nuevo estado a la frontera
-			return;					   // Terminar ya que se alcanzó el objetivo
-		}
-
-		// Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
-		if (!(nuevo.st == actual.st))
-		{ // Solo añadir si el estado es diferente al actual
-			frontera.push_back(nuevo);
-		}
-	}
-}
-
-nodeN1 programarAccionColaborador(const Action &action, nodeN1 &actual, const vector<vector<unsigned char>> &mapa)
-{
-	nodeN1 nuevo = actual; // Creación del nuevo nodo como copia del actual
-	if (action == actual.st.ultimaOrdenColaborador)
-	{
-		// Si la acción es la misma que la última acción del colaborador, aplicar una acción de inactividad del jugador
-		nuevo = programarAccionJugador(actIDLE, nuevo, mapa); // Suponiendo que actIDLE es una acción que no modifica el estado
-				nuevo.st.ultimaOrdenColaborador = action; // Actualizar la última orden del colaborador
-
-	}
-	else
-	{
-		// Aplicar la acción del colaborador
-		nuevo.st = applyN1(action, nuevo.st, mapa);
-		nuevo.st.ultimaOrdenColaborador = action; // Actualizar la última orden del colaborador
-	}
-
-	// Verificar si la acción fue válida
-	if (!(nuevo.st == actual.st))
-	{
-		actual.secuencia.push_back(action);
-		return nuevo;
-	}
-	return actual; // Devolver el estado original si la acción no cambió el estado
-}
-void programarAccionesColaborador(nodeN1 &actual, const ubicacion &final, const vector<vector<unsigned char>> &mapa, list<nodeN1> &frontera)
-{
-	// Acciones posibles del jugador
-	vector<Action> acciones = {act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP};
-
-	for (auto accion : acciones)
-	{
-		nodeN1 nuevo = programarAccionColaborador(accion, actual, mapa);
-
-		// Comprobar si el objetivo se ha conseguido
-		if (nuevo.st.colaborador.f == final.f && nuevo.st.colaborador.c == final.c)
-		{
-			frontera.push_back(nuevo); // Añadir el nuevo estado a la frontera
-			return;					   // Terminar ya que se alcanzó el objetivo
-		}
-
-		// Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
-		if (!(nuevo.st == actual.st))
-		{ // Solo añadir si el estado es diferente al actual
-			frontera.push_back(nuevo);
-		}
-	}
-}
 list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa) {
+    nodeN1 current_node;
     list<nodeN1> frontier;
     set<nodeN1> explored;
     list<Action> plan;
-    nodeN1 current_node;
-    current_node.st = inicio;
-    frontier.push_back(current_node);
-
-    while (!frontier.empty()) {
-        current_node = frontier.front();
-        frontier.pop_front();
-
-        // Comprobar si se ha alcanzado la solución
-        if (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c) {
-            plan = current_node.secuencia;
-            cout << "Plan encontrado con " << plan.size() << " acciones." << endl;
-            return plan;  // Solución encontrada
-        }
-
-        // Insertar en explorados si no ha sido explorado antes
-        if (explored.find(current_node) != explored.end()) {
-            continue;  // Nodo ya explorado
-        }
-        explored.insert(current_node);
-
-        // Generar hijos basado en la visibilidad del colaborador
-        if (ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador)) {
-            // Colaborador visible: aplicar acciones del colaborador
-            programarAccionesColaborador(current_node, final, mapa, frontier);
-        } else {
-            // Colaborador no visible: aplicar acciones del jugador
-            programarAccionesJugador(current_node, final, mapa, frontier);
-        }
-    }
-
-    cout << "No se encontró un plan." << endl;
-    return list<Action>();  // Retornar lista vacía si no se encuentra solución
-}
-*/
-list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
-{
-	nodeN1 current_node;
-	list<nodeN1> frontier;
-	set<nodeN1> explored;
-	list<Action> plan;
-	int iteraciones = 0;
+    int iteraciones = 0;
     int abiertos = 1;  // Comienza con el nodo inicial ya en la frontera
     int cerrados = 0;
-	current_node.st = inicio;
-	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
-	frontier.push_back(current_node);
+    current_node.st = inicio;
+    bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
+    frontier.push_back(current_node);
 
-	while (!frontier.empty() && !SolutionFound)
-	{
-		frontier.pop_front();
-		cerrados++;
-		explored.insert(current_node);
+    while (!frontier.empty() && !SolutionFound) {
+        current_node = frontier.front();
+        frontier.pop_front();
+        cerrados++;
+        explored.insert(current_node);
 
-		// Comprobar si el colaborador está en el campo de visión del jugador
-		if (ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
-		{
-			// Generar Hijo(s) colaborador
+        // Determinar las acciones apropiadas según la visibilidad del colaborador
+        vector<Action> acciones = ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador) ?
+                                  vector<Action>{act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP} : 
+                                  vector<Action>{actWALK, actRUN, actTURN_L, actTURN_SR, actIDLE};
 
-			// Generar Hijo actCLB_WALK
-			nodeN1 child_clbwalk = current_node;
-			child_clbwalk.st = applyN1(act_CLB_WALK, current_node.st, mapa);
-			child_clbwalk.secuencia.push_back(act_CLB_WALK);
-			if (child_clbwalk.st.colaborador.f == final.f and child_clbwalk.st.colaborador.c == final.c)
-			{
-				current_node = child_clbwalk;
-				SolutionFound = true;
-			}
-			else if (explored.find(child_clbwalk) == explored.end())
-			{
-				frontier.push_back(child_clbwalk);
-				abiertos++;
-			}
-			if (!SolutionFound)
-			{
-				// Generar hijo actCLB_TURN_SR
-				nodeN1 child_clbturnsr = current_node;
-				child_clbturnsr.st = applyN1(act_CLB_TURN_SR, current_node.st, mapa);
-				child_clbturnsr.secuencia.push_back(act_CLB_TURN_SR);
-				if (explored.find(child_clbturnsr) == explored.end())
-				{
-					frontier.push_back(child_clbturnsr);
-					abiertos++;
-				}
-			}
-		}
-		// Si no ve al colaborador, generar hijos jugador
-		if (!SolutionFound)
-		{
-			// Generar Hijo actWALK
-			nodeN1 child_walk = current_node;
-			child_walk.st = applyN1(actWALK, current_node.st, mapa);
-			child_walk.secuencia.push_back(actWALK);
-			if (child_walk.st.colaborador.f == final.f and child_walk.st.colaborador.c == final.c)
-			{
-				current_node = child_walk;
-				SolutionFound = true;
-			}
-			 else if (explored.find(child_walk) == explored.end())
-			{
-				frontier.push_back(child_walk);
-				abiertos++;
-			}
-			// Generar hijo actRUN
-			nodeN1 child_run = current_node;
-			child_run.st = applyN1(actRUN, current_node.st, mapa);
-			child_run.secuencia.push_back(actRUN);
-			if (child_run.st.colaborador.f == final.f and child_run.st.colaborador.c == final.c)
-			{
-				current_node = child_run;
-				SolutionFound = true;
-			}
-			else if (explored.find(child_run) == explored.end())
-			{
-				frontier.push_back(child_run);
-				abiertos++;
-			}
+        for (auto accion : acciones) {
+            nodeN1 hijo = current_node;
+            hijo.st = applyN1(accion, current_node.st, mapa);
+            hijo.secuencia.push_back(accion);
 
-			// Generar hijo actTURN_L
-			nodeN1 child_turnl = current_node;
-			child_turnl.st = applyN1(actTURN_L, current_node.st, mapa);
-			child_turnl.secuencia.push_back(actTURN_L);
-			if (child_turnl.st.colaborador.f == final.f and child_turnl.st.colaborador.c == final.c)
-			{
-				current_node = child_turnl;
-				SolutionFound = true;
-			}
-			else if (explored.find(child_turnl) == explored.end())
-			{
-				frontier.push_back(child_turnl);
-				abiertos++;
-			}
+            // Comprobar si se ha alcanzado la solución
+            if (hijo.st.colaborador.f == final.f && hijo.st.colaborador.c == final.c) {
+                current_node = hijo;
+                SolutionFound = true;
+                break;  // Salir del bucle, ya que se alcanzó el objetivo
+            }
 
-			// Generar hijo actTURN_SR
-			nodeN1 child_turnsr = current_node;
-			child_turnsr.st = applyN1(actTURN_SR, current_node.st, mapa);
-			child_turnsr.secuencia.push_back(actTURN_SR);
-			if (child_turnsr.st.colaborador.f == final.f and child_turnsr.st.colaborador.c == final.c)
-			{
-				current_node = child_turnsr;
-				SolutionFound = true;
-			}
-			else if (explored.find(child_turnsr) == explored.end())
-			{
-				frontier.push_back(child_turnsr);
-				abiertos++;
-			}
-			// Generar hijo actIDLE
-			nodeN1 child_idle = current_node;
-			child_idle.st = applyN1(actIDLE, current_node.st, mapa);
-			child_idle.secuencia.push_back(actIDLE);
-			if (child_idle.st.colaborador.f == final.f and child_idle.st.colaborador.c == final.c)
-			{
-				current_node = child_idle;
-				SolutionFound = true;
-			}
-			if (explored.find(child_idle) == explored.end())
-			{
-				frontier.push_back(child_idle);
-				abiertos++;
-			}
-		}
+            // Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
+            if (explored.find(hijo) == explored.end() && !(hijo.st == current_node.st)) {
+                frontier.push_back(hijo);
+                abiertos++;
+            }
+        }
 
-		if (!SolutionFound && !frontier.empty())
-		{
-			current_node = frontier.front();
-			while (!frontier.empty() and explored.find(current_node) != explored.end())
-			{
-				frontier.pop_front();
-				if (!frontier.empty())
-					current_node = frontier.front();
-			}
-		}
-		iteraciones++;
-	}
-	if (SolutionFound || (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c))
-	{
-		plan = current_node.secuencia;
-		cout << "Encontrado un plan: ";
-		PintaPlan(current_node.secuencia);
-		cout << "Abiertos: " << abiertos << endl;  
-		cout << "Cerrados: " << cerrados << endl;
-		cout << "Iteraciones: " << iteraciones << endl;
-		return plan;
-	}
+        if (!SolutionFound && !frontier.empty()) {
+            current_node = frontier.front();
+            while (!frontier.empty() && explored.find(current_node) != explored.end()) {
+                frontier.pop_front();
+                if (!frontier.empty())
+                    current_node = frontier.front();
+            }
+        }
+        iteraciones++;
+    }
 
+    if (SolutionFound || (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c)) {
+        plan = current_node.secuencia;
+        cout << "Encontrado un plan: ";
+        PintaPlan(current_node.secuencia);
+        cout << "Abiertos: " << abiertos << endl;  
+        cout << "Cerrados: " << cerrados << endl;
+        cout << "Iteraciones: " << iteraciones << endl;
+        return plan;
+    }
 }
+
 // Este es el método principal que se piden en la practica.
 // Tiene como entrada la información de los sensores y devuelve la acción a realizar.
 // Para ver los distintos sensores mirar fichero "comportamiento.hpp"

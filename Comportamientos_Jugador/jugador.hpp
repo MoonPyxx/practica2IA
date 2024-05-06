@@ -94,11 +94,17 @@ public:
   ComportamientoJugador(unsigned int size) : Comportamiento(size)
   {
     // Inicializar Variables de Estado
+     abiertos = 1;
+    cerrados = 0;
+    iteraciones = 0;
   }
   ComportamientoJugador(std::vector<std::vector<unsigned char>> mapaR) : Comportamiento(mapaR)
   {
     // Inicializar Variables de Estado
     hayPlan = false;
+    abiertos = 1;
+    cerrados = 0;
+    iteraciones = 0;
   }
   ComportamientoJugador(const ComportamientoJugador &comport) : Comportamiento(comport) {}
   ~ComportamientoJugador() {}
@@ -115,6 +121,10 @@ private:
   ubicacion goal, jugador, colaborador;
   stateN0 c_state;
   stateN1 c_state1;
+  // contadores
+  	int iteraciones;
+    int abiertos;
+    int cerrados;
 };
 
 #endif
