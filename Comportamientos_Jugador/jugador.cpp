@@ -318,7 +318,7 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 		if (!SolutionFound && !frontier.empty())
 		{
 			current_node = frontier.front();
-			while (!frontier.empty() and explored.find(current_node) != explored.end())
+			while (!frontier.empty() && explored.find(current_node) != explored.end())
 			{
 				frontier.pop_front();
 				if (!frontier.empty())

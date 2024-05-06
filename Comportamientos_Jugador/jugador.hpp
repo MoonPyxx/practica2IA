@@ -13,7 +13,7 @@ struct stateN0
 
   bool operator==(const stateN0 &x) const
   {
-    if (jugador == x.jugador and colaborador.f == x.colaborador.f and colaborador.c == x.colaborador.c)
+    if (jugador == x.jugador and colaborador == x.colaborador)
     {
       return true;
     }
@@ -51,9 +51,9 @@ struct stateN1
 
   bool operator==(const stateN1 &x) const
   {
-    if (jugador == x.jugador and colaborador.f == x.colaborador.f and colaborador.c == x.colaborador.c)
+    if (jugador == x.jugador && colaborador == x.colaborador)
     {
-      return true;
+      return true;  
     }
     else
     {
@@ -76,12 +76,14 @@ struct nodeN1{
       return true;
     else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula)
       return true;
-    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula && st.colaborador.f < b.st.jugador.f)
+    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f < b.st.colaborador.f)
       return true;
-    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula && st.colaborador.f == b.st.jugador.f && st.colaborador.c < b.st.colaborador.c)
+    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c < b.st.colaborador.c)
       return true;    
-    else
-      return false;
+    else if(st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c == b.st.colaborador.c && st.colaborador.brujula < b.st.colaborador.brujula)
+      return true;
+    else 
+    return false;
   }
 };
 class ComportamientoJugador : public Comportamiento
