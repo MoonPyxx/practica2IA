@@ -466,68 +466,74 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 	}
 	return st_result;
 }
-list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa) {
-    nodeN1 current_node;
-    list<nodeN1> frontier;
-    set<nodeN1> explored;
-    list<Action> plan;
-    int iteraciones = 0;
-    int abiertos = 1;  // Comienza con el nodo inicial ya en la frontera
-    int cerrados = 0;
-    current_node.st = inicio;
-    bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
-    frontier.push_back(current_node);
+list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
+{
+	nodeN1 current_node;
+	list<nodeN1> frontier;
+	set<nodeN1> explored;
+	list<Action> plan;
+	int iteraciones = 0;
+	int abiertos = 1; // Comienza con el nodo inicial ya en la frontera
+	int cerrados = 0;
+	current_node.st = inicio;
+	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
+	frontier.push_back(current_node);
 
-    while (!frontier.empty() && !SolutionFound) {
-        current_node = frontier.front();
-        frontier.pop_front();
-        cerrados++;
-        explored.insert(current_node);
+	while (!frontier.empty() && !SolutionFound)
+	{
+		current_node = frontier.front();
+		frontier.pop_front();
+		cerrados++;
+		explored.insert(current_node);
 
-        // Determinar las acciones apropiadas según la visibilidad del colaborador
-        vector<Action> acciones = ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador) ?
-                                  vector<Action>{act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP} : 
-                                  vector<Action>{actWALK, actRUN, actTURN_L, actTURN_SR, actIDLE};
+		// Determinar las acciones apropiadas según la visibilidad del colaborador
+		vector<Action> acciones = ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador) ? vector<Action>{act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP} : vector<Action>{actWALK, actRUN, actTURN_L, actTURN_SR, actIDLE};
 
-        for (auto accion : acciones) {
-            nodeN1 hijo = current_node;
-            hijo.st = applyN1(accion, current_node.st, mapa);
-            hijo.secuencia.push_back(accion);
+		for (auto accion : acciones)
+		{
+			nodeN1 hijo = current_node;
+			hijo.st = applyN1(accion, current_node.st, mapa);
+			hijo.secuencia.push_back(accion);
 
-            // Comprobar si se ha alcanzado la solución
-            if (hijo.st.colaborador.f == final.f && hijo.st.colaborador.c == final.c) {
-                current_node = hijo;
-                SolutionFound = true;
-                break;  // Salir del bucle, ya que se alcanzó el objetivo
-            }
+			// Comprobar si se ha alcanzado la solución
+			if (hijo.st.colaborador.f == final.f && hijo.st.colaborador.c == final.c)
+			{
+				current_node = hijo;
+				SolutionFound = true;
+				break; // Salir del bucle, ya que se alcanzó el objetivo
+			}
 
-            // Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
-            if (explored.find(hijo) == explored.end() && !(hijo.st == current_node.st)) {
-                frontier.push_back(hijo);
-                abiertos++;
-            }
-        }
+			// Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
+			if (explored.find(hijo) == explored.end() && !(hijo.st == current_node.st))
+			{
+				frontier.push_back(hijo);
+				abiertos++;
+			}
+		}
 
-        if (!SolutionFound && !frontier.empty()) {
-            current_node = frontier.front();
-            while (!frontier.empty() && explored.find(current_node) != explored.end()) {
-                frontier.pop_front();
-                if (!frontier.empty())
-                    current_node = frontier.front();
-            }
-        }
-        iteraciones++;
-    }
+		if (!SolutionFound && !frontier.empty())
+		{
+			current_node = frontier.front();
+			while (!frontier.empty() && explored.find(current_node) != explored.end())
+			{
+				frontier.pop_front();
+				if (!frontier.empty())
+					current_node = frontier.front();
+			}
+		}
+		iteraciones++;
+	}
 
-    if (SolutionFound || (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c)) {
-        plan = current_node.secuencia;
-        cout << "Encontrado un plan: ";
-        PintaPlan(current_node.secuencia);
-        cout << "Abiertos: " << abiertos << endl;  
-        cout << "Cerrados: " << cerrados << endl;
-        cout << "Iteraciones: " << iteraciones << endl;
-        return plan;
-    }
+	if (SolutionFound || (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c))
+	{
+		plan = current_node.secuencia;
+		cout << "Encontrado un plan: ";
+		PintaPlan(current_node.secuencia);
+		cout << "Abiertos: " << abiertos << endl;
+		cout << "Cerrados: " << cerrados << endl;
+		cout << "Iteraciones: " << iteraciones << endl;
+		return plan;
+	}
 }
 
 // Este es el método principal que se piden en la practica.
