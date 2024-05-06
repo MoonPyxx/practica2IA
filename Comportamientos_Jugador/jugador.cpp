@@ -409,76 +409,73 @@ bool samePosition(const ubicacion &a, const ubicacion &b)
 {
 	return a.f == b.f && a.c == b.c;
 }
-stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa)
-{
-	stateN1 st_result = st;
-	ubicacion sig_ubicacion, sig_ubicacion2;
+stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa) {
+    stateN1 st_result = st;
+    ubicacion sig_ubicacion, sig_ubicacion2;
 
-	switch (a)
-	{
-	case actWALK:
-		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.colaborador))
-		{
-			st_result.jugador = sig_ubicacion;
-		}
-		break;
-	case actRUN:
-		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.colaborador))
-		{
-			sig_ubicacion2 = NextCasilla(sig_ubicacion);
-			if (casillaTransitable(sig_ubicacion2, mapa) && !samePosition(sig_ubicacion2, st.colaborador))
-			{
-				st_result.jugador = sig_ubicacion2;
-			}
-		}
-		break;
-	case actIDLE:
-		break;
-	case actTURN_L:
-		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
-		break;
-	case actTURN_SR:
-		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
-		break;
-	case act_CLB_WALK:
-		sig_ubicacion = NextCasilla(st.colaborador);
-		if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.jugador))
-		{
-			st_result.colaborador = sig_ubicacion;
-			st_result.ultimaOrdenColaborador = a;
-		}
-		break;
-	case act_CLB_TURN_SR:
-		st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
-		st_result.ultimaOrdenColaborador = a;
-		break;
-	case act_CLB_STOP:
-		st_result.ultimaOrdenColaborador = a;
-		break;
-	}
+    // Acciones del jugador
+    if (!ColaboradorVisible(st.jugador, st.colaborador) || a != st.ultimaOrdenColaborador) {
+        switch (a) {
+        case actWALK:
+            sig_ubicacion = NextCasilla(st.jugador);
+            if (casillaTransitable(sig_ubicacion, mapa)) {
+                st_result.jugador = sig_ubicacion;
+            }
+            break;
+        case actRUN:
+            sig_ubicacion = NextCasilla(st.jugador);
+            if (casillaTransitable(sig_ubicacion, mapa)) {
+                sig_ubicacion2 = NextCasilla(sig_ubicacion);
+                if (casillaTransitable(sig_ubicacion2, mapa)) {
+                    st_result.jugador = sig_ubicacion2;
+                }
+            }
+            break;
+        case actIDLE:
+            // No cambia nada
+            break;
+        case actTURN_L:
+        case actTURN_SR:
+            st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + ((a == actTURN_L) ? 6 : 1)) % 8);
+            break;
+        }
+    }
 
-	// Manejo de acciones continuas para el colaborador
-	if (a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
-	{
-		switch (st.ultimaOrdenColaborador)
-		{
-		case act_CLB_WALK:
-			sig_ubicacion = NextCasilla(st.colaborador);
-			if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.jugador))
-			{
-				st_result.colaborador = sig_ubicacion;
-			}
-			break;
-		case act_CLB_TURN_SR:
-			st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
-			break;
-		}
-	}
+    // Acciones del colaborador
+    if (a == act_CLB_WALK || a == act_CLB_TURN_SR || a == act_CLB_STOP) {
+        switch (a) {
+        case act_CLB_WALK:
+            sig_ubicacion = NextCasilla(st.colaborador);
+            if (casillaTransitable(sig_ubicacion, mapa)) {
+                st_result.colaborador = sig_ubicacion;
+            }
+            break;
+        case act_CLB_TURN_SR:
+            st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
+            break;
+        case act_CLB_STOP:
+            // No cambia nada
+            break;
+        }
+        st_result.ultimaOrdenColaborador = a;
+    } else if (ColaboradorVisible(st_result.jugador, st_result.colaborador)) {
+        // Reaccionar a la última acción del colaborador si es visible
+        switch (st.ultimaOrdenColaborador) {
+        case act_CLB_WALK:
+            sig_ubicacion = NextCasilla(st_result.colaborador);
+            if (casillaTransitable(sig_ubicacion, mapa)) {
+                st_result.colaborador = sig_ubicacion;
+            }
+            break;
+        case act_CLB_TURN_SR:
+            st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
+            break;
+        }
+    }
 
-	return st_result;
+    return st_result;
 }
+
 
 list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
 {
