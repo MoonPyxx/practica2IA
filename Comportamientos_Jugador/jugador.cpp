@@ -577,6 +577,9 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 	list<nodeN1> frontier;
 	set<nodeN1> explored;
 	list<Action> plan;
+	int iteraciones = 0;
+    int abiertos = 1;  // Comienza con el nodo inicial ya en la frontera
+    int cerrados = 0;
 	current_node.st = inicio;
 	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
 	frontier.push_back(current_node);
@@ -584,6 +587,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 	while (!frontier.empty() && !SolutionFound)
 	{
 		frontier.pop_front();
+		cerrados++;
 		explored.insert(current_node);
 
 		// Comprobar si el colaborador está en el campo de visión del jugador
@@ -603,6 +607,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			else if (explored.find(child_clbwalk) == explored.end())
 			{
 				frontier.push_back(child_clbwalk);
+				abiertos++;
 			}
 			if (!SolutionFound)
 			{
@@ -613,6 +618,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 				if (explored.find(child_clbturnsr) == explored.end())
 				{
 					frontier.push_back(child_clbturnsr);
+					abiertos++;
 				}
 			}
 		}
@@ -631,6 +637,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			 else if (explored.find(child_walk) == explored.end())
 			{
 				frontier.push_back(child_walk);
+				abiertos++;
 			}
 			// Generar hijo actRUN
 			nodeN1 child_run = current_node;
@@ -644,6 +651,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			else if (explored.find(child_run) == explored.end())
 			{
 				frontier.push_back(child_run);
+				abiertos++;
 			}
 
 			// Generar hijo actTURN_L
@@ -658,6 +666,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			else if (explored.find(child_turnl) == explored.end())
 			{
 				frontier.push_back(child_turnl);
+				abiertos++;
 			}
 
 			// Generar hijo actTURN_SR
@@ -672,6 +681,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			else if (explored.find(child_turnsr) == explored.end())
 			{
 				frontier.push_back(child_turnsr);
+				abiertos++;
 			}
 			// Generar hijo actIDLE
 			nodeN1 child_idle = current_node;
@@ -685,6 +695,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (explored.find(child_idle) == explored.end())
 			{
 				frontier.push_back(child_idle);
+				abiertos++;
 			}
 		}
 
@@ -698,16 +709,19 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 					current_node = frontier.front();
 			}
 		}
+		iteraciones++;
 	}
-
-	if (SolutionFound)
+	if (SolutionFound || (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c))
 	{
 		plan = current_node.secuencia;
 		cout << "Encontrado un plan: ";
 		PintaPlan(current_node.secuencia);
+		cout << "Abiertos: " << abiertos << endl;  
+		cout << "Cerrados: " << cerrados << endl;
+		cout << "Iteraciones: " << iteraciones << endl;
+		return plan;
 	}
 
-	return plan;
 }
 // Este es el método principal que se piden en la practica.
 // Tiene como entrada la información de los sensores y devuelve la acción a realizar.
