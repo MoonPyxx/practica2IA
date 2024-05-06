@@ -10,7 +10,7 @@
 
 bool casillaTransitable(const ubicacion &x, const vector<vector<unsigned char>> &mapa)
 {
-	return (mapa[x.f][x.c] != 'P' and mapa[x.f][x.c] != 'M');
+	return (mapa[x.f][x.c] != 'P' && mapa[x.f][x.c] != 'M');
 }
 ubicacion NextCasilla(const ubicacion &pos)
 {
@@ -57,17 +57,17 @@ stateN0 apply(const Action &a, const stateN0 &st, const vector<vector<unsigned c
 	{
 	case actWALK: // si prox casilla es transitable y no está ocupada por el colaborador
 		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.colaborador.f and sig_ubicacion.c == st.colaborador.c))
+		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c))
 		{
 			st_result.jugador = sig_ubicacion;
 		}
 		break;
 	case actRUN: // si prox 2 casillas son transitables y no están ocupadas por el colaborador
 		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.colaborador.f and sig_ubicacion.c == st.colaborador.c))
+		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c))
 		{
 			sig_ubicacion2 = NextCasilla(sig_ubicacion);
-			if (casillaTransitable(sig_ubicacion2, mapa) and !(sig_ubicacion2.f == st.colaborador.f and sig_ubicacion2.c == st.colaborador.c))
+			if (casillaTransitable(sig_ubicacion2, mapa) && !(sig_ubicacion2.f == st.colaborador.f && sig_ubicacion2.c == st.colaborador.c))
 			{
 				st_result.jugador = sig_ubicacion2;
 			}
@@ -103,7 +103,7 @@ void ComportamientoJugador::VisualizaPlan(const stateN0 &st, const list<Action> 
 
 	while (it != plan.end())
 	{
-		if ((*it != act_CLB_WALK) and (*it != act_CLB_TURN_SR) and (*it != act_CLB_STOP))
+		if ((*it != act_CLB_WALK) && (*it != act_CLB_TURN_SR) && (*it != act_CLB_STOP))
 		{
 			switch (cst.ultimaOrdenColaborador)
 			{
@@ -159,7 +159,7 @@ void ComportamientoJugador::VisualizaPlanN1(const stateN1 &st, const list<Action
 
 	while (it != plan.end())
 	{
-		if ((*it != act_CLB_WALK) and (*it != act_CLB_TURN_SR) and (*it != act_CLB_STOP))
+		if ((*it != act_CLB_WALK) && (*it != act_CLB_TURN_SR) && (*it != act_CLB_STOP))
 		{
 			switch (cst.ultimaOrdenColaborador)
 			{
@@ -270,7 +270,7 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 		nodeN0 child_walk = current_node;
 		child_walk.st = apply(actWALK, current_node.st, mapa);
 		child_walk.secuencia.push_back(actWALK);
-		if (child_walk.st.jugador.f == final.f and child_walk.st.jugador.c == final.c)
+		if (child_walk.st.jugador.f == final.f && child_walk.st.jugador.c == final.c)
 		{
 			current_node = child_walk;
 			SolutionFound = true;
@@ -286,7 +286,7 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 			nodeN0 child_run = current_node;
 			child_run.st = apply(actRUN, current_node.st, mapa);
 			child_run.secuencia.push_back(actRUN);
-			if (child_run.st.jugador.f == final.f and child_run.st.jugador.c == final.c)
+			if (child_run.st.jugador.f == final.f && child_run.st.jugador.c == final.c)
 			{
 				current_node = child_run;
 				SolutionFound = true;
@@ -413,17 +413,17 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 	{
 	case actWALK: // si prox casilla es transitable y no está ocupada por el colaborador
 		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.colaborador.f and sig_ubicacion.c == st.colaborador.c))
+		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c))
 		{
 			st_result.jugador = sig_ubicacion;
 		}
 		break;
 	case actRUN: // si prox 2 casillas son transitables y no están ocupadas por el colaborador
 		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.colaborador.f and sig_ubicacion.c == st.colaborador.c))
+		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c))
 		{
 			sig_ubicacion2 = NextCasilla(sig_ubicacion);
-			if (casillaTransitable(sig_ubicacion2, mapa) and !(sig_ubicacion2.f == st.colaborador.f and sig_ubicacion2.c == st.colaborador.c))
+			if (casillaTransitable(sig_ubicacion2, mapa) && !(sig_ubicacion2.f == st.colaborador.f && sig_ubicacion2.c == st.colaborador.c))
 			{
 				st_result.jugador = sig_ubicacion2;
 			}
@@ -439,7 +439,7 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		break;
 	case act_CLB_WALK:
 		sig_ubicacion = NextCasilla(st.colaborador);
-		if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.jugador.f and sig_ubicacion.c == st.jugador.c))
+		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.jugador.f && sig_ubicacion.c == st.jugador.c))
 		{
 			st_result.colaborador = sig_ubicacion;
 		}
@@ -454,7 +454,7 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		{
 		case act_CLB_WALK:
 			sig_ubicacion = NextCasilla(st.colaborador);
-			if (casillaTransitable(sig_ubicacion, mapa) and !(sig_ubicacion.f == st.jugador.f and sig_ubicacion.c == st.jugador.c))
+			if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.jugador.f && sig_ubicacion.c == st.jugador.c))
 			{
 				st_result.colaborador = sig_ubicacion;
 			}
@@ -588,7 +588,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 				hayPlan = true;
 			}
 		}
-		if (hayPlan and plan.size() > 0)
+		if (hayPlan && plan.size() > 0)
 		{
 			accion = plan.front();
 			plan.pop_front();
