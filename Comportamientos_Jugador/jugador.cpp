@@ -337,7 +337,7 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 	return plan;
 }
 // NIVEL 1
-bool ColaboradorVisible(ubicacion &j, ubicacion &c)
+bool ColaboradorVisible(const ubicacion &j, const ubicacion &c)
 {
 	int fila_inicio, fila_fin, col_inicio, col_fin;
 
