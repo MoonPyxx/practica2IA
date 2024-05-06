@@ -405,67 +405,70 @@ bool ColaboradorVisible(const ubicacion &j, const ubicacion &c)
 	return false;
 }
 
-stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa)
-{
-	stateN1 st_result = st;
-	ubicacion sig_ubicacion, sig_ubicacion2;
-	switch (a)
-	{
-	case actWALK: // si prox casilla es transitable y no está ocupada por el colaborador
-		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c))
-		{
-			st_result.jugador = sig_ubicacion;
-		}
-		break;
-	case actRUN: // si prox 2 casillas son transitables y no están ocupadas por el colaborador
-		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c))
-		{
-			sig_ubicacion2 = NextCasilla(sig_ubicacion);
-			if (casillaTransitable(sig_ubicacion2, mapa) && !(sig_ubicacion2.f == st.colaborador.f && sig_ubicacion2.c == st.colaborador.c))
-			{
-				st_result.jugador = sig_ubicacion2;
-			}
-		}
-		break;
-	case actIDLE:
-		break;
-	case actTURN_L:
-		st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 6) % 8);
-		break;
-	case actTURN_SR:
-		st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 1) % 8);
-		break;
-	case act_CLB_WALK:
-		sig_ubicacion = NextCasilla(st.colaborador);
-		if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.jugador.f && sig_ubicacion.c == st.jugador.c))
-		{
-			st_result.colaborador = sig_ubicacion;
-		}
-		break;
-	case act_CLB_TURN_SR:
-		st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
-		break;
-	}
-	if (a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
-	{
-		switch (st.ultimaOrdenColaborador)
-		{
-		case act_CLB_WALK:
-			sig_ubicacion = NextCasilla(st.colaborador);
-			if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion.f == st.jugador.f && sig_ubicacion.c == st.jugador.c))
-			{
-				st_result.colaborador = sig_ubicacion;
-			}
-			break;
-		case act_CLB_TURN_SR:
-			st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
-			break;
-		}
-	}
-	return st_result;
+stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa) {
+    stateN1 st_result = st;
+    ubicacion sig_ubicacion, sig_ubicacion2;
+
+    switch (a) {
+    case actWALK:
+        sig_ubicacion = NextCasilla(st.jugador);
+        if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion == st.colaborador)) {
+            st_result.jugador = sig_ubicacion;
+        }
+        break;
+    case actRUN:
+        sig_ubicacion = NextCasilla(st.jugador);
+        if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion == st.colaborador)) {
+            sig_ubicacion2 = NextCasilla(sig_ubicacion);
+            if (casillaTransitable(sig_ubicacion2, mapa) && !(sig_ubicacion2 == st.colaborador)) {
+                st_result.jugador = sig_ubicacion2;
+            }
+        }
+        break;
+    case actIDLE:
+        // No changes to state
+        break;
+    case actTURN_L:
+        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
+        break;
+    case actTURN_SR:
+        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
+        break;
+    case act_CLB_WALK:
+        sig_ubicacion = NextCasilla(st.colaborador);
+        if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion == st.jugador)) {
+            st_result.colaborador = sig_ubicacion;
+            st_result.ultimaOrdenColaborador = a;
+        }
+        break;
+    case act_CLB_TURN_SR:
+        st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
+        st_result.ultimaOrdenColaborador = a;
+        break;
+    case act_CLB_STOP:
+        st_result.ultimaOrdenColaborador = a;
+        break;
+    }
+
+    // Handle ongoing actions for the collaborator if the action is not specifically for the collaborator
+    if (a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP) {
+        switch (st.ultimaOrdenColaborador) {
+        case act_CLB_WALK:
+            sig_ubicacion = NextCasilla(st.colaborador);
+            if (casillaTransitable(sig_ubicacion, mapa) && !(sig_ubicacion == st.jugador)) {
+                st_result.colaborador = sig_ubicacion;
+            }
+            break;
+        case act_CLB_TURN_SR:
+            st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
+            break;
+        }
+    }
+
+    return st_result;
 }
+
+
 list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
 {
 	nodeN1 current_node;
