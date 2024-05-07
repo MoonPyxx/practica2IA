@@ -338,150 +338,358 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 }
 // NIVEL 1
 
-	bool ColaboradorVisible(const ubicacion &j, const ubicacion &c)
+bool ColaboradorVisible(const ubicacion &j, const ubicacion &c)
+{
+switch (j.brujula)
 	{
-		int fila_inicio, fila_fin, col_inicio, col_fin;
-
-		switch (j.brujula)
-		{
-		case norte:
-			fila_inicio = -3;
-			fila_fin = -1;
-			col_inicio = -3;
-			col_fin = 3;
-			break;
-		case este:
-			fila_inicio = -3;
-			fila_fin = 3;
-			col_inicio = 1;
-			col_fin = 3;
-			break;
-		case sur:
-			fila_inicio = 1;
-			fila_fin = 3;
-			col_inicio = -3;
-			col_fin = 3;
-			break;
-		case oeste:
-			fila_inicio = -3;
-			fila_fin = 3;
-			col_inicio = -3;
-			col_fin = -1;
-			break;
-		case noroeste:
-			fila_inicio = -3;
-			fila_fin = 0;
-			col_inicio = -3;
-			col_fin = 0;
-			break;
-		case noreste:
-			fila_inicio = -3;
-			fila_fin = 0;
-			col_inicio = 0;
-			col_fin = 3;
-			break;
-		case sureste:
-			fila_inicio = 0;
-			fila_fin = 3;
-			col_inicio = 0;
-			col_fin = 3;
-			break;
-		case suroeste:
-			fila_inicio = 0;
-			fila_fin = 3;
-			col_inicio = -3;
-			col_fin = 0;
-			break;
-		}
-
-		for (int fila = fila_inicio; fila <= fila_fin; fila++)
-		{
-			for (int col = col_inicio; col <= col_fin; col++)
-			{
-				if ((j.f + fila) == c.f && (j.c + col) == c.c)
-					return true;
-			}
-		}
-
-		return false;
+	case norte:
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case este:
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case sur:
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		break;
+	case oeste:
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		break;
+	case noroeste:
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		break;
+	case noreste:
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case sureste:
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		break;
+	case suroeste:
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		break;
+	}
+	return false;
 	}
 bool samePosition(const ubicacion &a, const ubicacion &b)
 {
 	return a.f == b.f && a.c == b.c;
 }
-stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa) {
-    stateN1 st_result = st;
-    ubicacion sig_ubicacion, sig_ubicacion2;
+stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned char>> mapa)
+{
+	stateN1 st_result = st;
+	ubicacion sig_ubicacion, sig_ubicacion2;
 
-    // Acciones del jugador
-    switch (a) {
-    case actWALK:
-        sig_ubicacion = NextCasilla(st.jugador);
-        if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.colaborador)) {
-            st_result.jugador = sig_ubicacion;
-        }
-        break;
-    case actRUN:
-        sig_ubicacion = NextCasilla(st.jugador);
-        if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.colaborador)) {
-            sig_ubicacion2 = NextCasilla(sig_ubicacion);
-            if (casillaTransitable(sig_ubicacion2, mapa) && !samePosition(sig_ubicacion2, st.colaborador)) {
-                st_result.jugador = sig_ubicacion2;
-            }
-        }
-        break;
-    case actIDLE:
-        // No changes to state
-        break;
-    case actTURN_L:
-    case actTURN_SR:
-        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + ((a == actTURN_L) ? 6 : 1)) % 8);
-        break;
-    }
+	// Acciones del jugador
+	switch (a)
+	{
+	case actWALK:
+		sig_ubicacion = NextCasilla(st.jugador);
+		if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.colaborador))
+		{
+			st_result.jugador = sig_ubicacion;
+		}
+		break;
+	case actRUN:
+		sig_ubicacion = NextCasilla(st.jugador);
+		if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.colaborador))
+		{
+			sig_ubicacion2 = NextCasilla(sig_ubicacion);
+			if (casillaTransitable(sig_ubicacion2, mapa) && !samePosition(sig_ubicacion2, st.colaborador))
+			{
+				st_result.jugador = sig_ubicacion2;
+			}
+		}
+		break;
+	case actIDLE:
+		sig_ubicacion = st.jugador;
+		st_result.jugador = sig_ubicacion;
+		break;
+	case actTURN_L:
+		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
+		break;
+	case actTURN_SR:
+		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
+		break;
 
-    // Acciones del colaborador
-    switch (a) {
-    case act_CLB_WALK:
-    case act_CLB_TURN_SR:
-        if (ColaboradorVisible(st_result.jugador, st_result.colaborador)) {
-            // Sólo actualiza si el colaborador es visible
-            if (a == act_CLB_WALK) {
-                sig_ubicacion = NextCasilla(st.colaborador);
-                if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.jugador)) {
-                    st_result.colaborador = sig_ubicacion;
-                    st_result.ultimaOrdenColaborador = a;
-                }
-            } else { // act_CLB_TURN_SR
-                st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
-                st_result.ultimaOrdenColaborador = a;
-            }
-        }
-        break;
-    case act_CLB_STOP:
-        st_result.ultimaOrdenColaborador = a;
-        break;
-    }
+	// Acciones del colaborador
+	case act_CLB_WALK:
+		if (ColaboradorVisible(st_result.jugador, st_result.colaborador))
+		{
+			sig_ubicacion = NextCasilla(st.colaborador);
+			if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st.jugador))
+			{
+				st_result.colaborador = sig_ubicacion;
+				st_result.ultimaOrdenColaborador = a;
+			}
+		}
+		break;
+	case act_CLB_TURN_SR:
+		if (ColaboradorVisible(st_result.jugador, st_result.colaborador))
+		{
+			st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
+			st_result.ultimaOrdenColaborador = a;
+		}
+		break;
+	case act_CLB_STOP:
+	if(ColaboradorVisible(st_result.jugador, st_result.colaborador))
+	{
+		st_result.ultimaOrdenColaborador = a;
 
-    // Aplicar la última acción del colaborador si aún está en rango
-    if (ColaboradorVisible(st_result.jugador, st_result.colaborador) && a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP) {
-        switch (st_result.ultimaOrdenColaborador) {
-        case act_CLB_WALK:
-            sig_ubicacion = NextCasilla(st_result.colaborador);
-            if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st_result.jugador)) {
-                st_result.colaborador = sig_ubicacion;
-            }
-            break;
-        case act_CLB_TURN_SR:
-            st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
-            break;
-        }
-    }
+	}
+		break;
+	}
 
-    return st_result;
+	// Aplicar la última acción del colaborador si aún está en rango
+	if (ColaboradorVisible(st_result.jugador, st_result.colaborador) && a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
+	{
+		switch (st_result.ultimaOrdenColaborador)
+		{
+		case act_CLB_WALK:
+			sig_ubicacion = NextCasilla(st_result.colaborador);
+			if (casillaTransitable(sig_ubicacion, mapa) && !samePosition(sig_ubicacion, st_result.jugador))
+			{
+				st_result.colaborador = sig_ubicacion;
+			}
+			break;
+		case act_CLB_TURN_SR:
+			st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
+			break;
+		}
+	}
+
+	return st_result;
 }
-
-
-
 
 list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
 {
@@ -504,7 +712,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 		explored.insert(current_node);
 
 		// Determinar las acciones apropiadas según la visibilidad del colaborador
-		vector<Action> acciones = ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador) ? vector<Action>{act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP} : vector<Action>{actWALK, actRUN, actTURN_L, actTURN_SR, actIDLE};
+		vector<Action> acciones =  {act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP, actWALK, actRUN, actTURN_L, actTURN_SR, actIDLE};
 
 		for (auto accion : acciones)
 		{
