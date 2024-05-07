@@ -88,6 +88,41 @@ struct nodeN1{
     return false;
   }
 };
+struct stateN2{
+  ubicacion jugador;
+  ubicacion colaborador;
+  bool con_bikini;
+  bool con_zapatillas;
+  int coste;
+
+  bool operator== (const stateN2 &x) const{
+    return (jugador.f == x.jugador.f && jugador.c == x.jugador.c && jugador.brujula == x.jugador.brujula &&
+            con_bikini == x.con_bikini && con_zapatillas == x.con_zapatillas && coste == x.coste);
+  }
+
+  bool operator<(const stateN2 &st) const{ // Operador para distinguir estados en set de cerrados
+    return (jugador.f < st.jugador.f ||
+    jugador.f == st.jugador.f and jugador.c < st.jugador.c ||
+    jugador.f == st.jugador.f and jugador.c == st.jugador.c and jugador.brujula < st.jugador.brujula ||
+    jugador.f == st.jugador.f and jugador.c == st.jugador.c and jugador.brujula == st.jugador.brujula and con_bikini < st.con_bikini ||
+    jugador.f == st.jugador.f and jugador.c == st.jugador.c and jugador.brujula == st.jugador.brujula and con_bikini == st.con_bikini and con_zapatillas < st.con_zapatillas);
+  }
+};
+
+struct nodeN2{
+  stateN2 st;
+  list<Action> secuencia;
+
+  bool operator==(const nodeN2 &n) const{
+    return (st == n.st);
+  }
+
+  bool operator<(const nodeN2 &n) const{ // Operador para ordenar los nodos en la priority queue
+    return (st.coste > n.st.coste);
+  }
+};
+
+
 class ComportamientoJugador : public Comportamiento
 {
 public:
@@ -121,6 +156,7 @@ private:
   ubicacion goal, jugador, colaborador;
   stateN0 c_state;
   stateN1 c_state1;
+  stateN2 c_state2;
   // contadores
   	int iteraciones;
     int abiertos;
