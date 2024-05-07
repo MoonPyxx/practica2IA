@@ -849,104 +849,44 @@ stateN2 applyN2(const Action &a, const stateN2 &st, const vector<vector<unsigned
 
 int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigned char>> &mapa)
 {
-	unsigned char casilla = mapa[actual.jugador.f][actual.jugador.c];
-	int coste = 0;
-	switch (act)
-	{
-	case actWALK:
-		switch (casilla)
-		{
-		case 'A':
-			if (actual.tiene_bikini)
-				coste = 10;
-			else
-				coste = 100;
-			break;
-		case 'B':
-			if (actual.tiene_zapatillas)
-				coste = 15;
-			else
-				coste = 50;
-			break;
-		case 'T':
-			coste = 2;
-			break;
-		default:
-			coste = 1;
-			break;
-		}
-		break;
-	case actRUN:
-		switch (casilla)
-		{
-		case 'A':
-			if (actual.tiene_bikini)
-				coste = 15;
-			else
-				coste = 150;
-			break;
-		case 'B':
-			if (actual.tiene_zapatillas)
-				coste = 25;
-			else
-				coste = 75;
-			break;
-		case 'T':
-			coste = 3;
-			break;
-		default:
-			coste = 1;
-			break;
-		}
-		break;
-	case actTURN_L:
-		switch (casilla)
-		{
-		case 'A':
-			if (actual.tiene_bikini)
-				coste = 5;
-			else
-				coste = 30;
-			break;
-		case 'B':
-			if (actual.tiene_zapatillas)
-				coste = 1;
-			else
-				coste = 7;
-			break;
-		case 'T':
-			coste = 2;
-			break;
-		default:
-			coste = 1;
-			break;
-		}
-		break;
-	case actTURN_SR:
-		switch (casilla)
-		{
-		case 'A':
-			if (actual.tiene_bikini)
-				coste = 2;
-			else
-				coste = 10;
-			break;
-		case 'B':
-			if (actual.tiene_zapatillas)
-				coste = 1;
-			else
-				coste = 5;
-			break;
-		case 'T':
-			coste = 1;
-			break;
-		default:
-			coste = 1;
-			break;
-		}
-		break;
-	}
-	return coste;
+    unsigned char casilla = mapa[actual.jugador.f][actual.jugador.c];
+    
+    struct {
+        int bikini;
+        int sinBikini;
+        int zapatillas;
+        int sinZapatillas;
+        int terreno;
+        int defecto;
+    } costes;
+    
+    switch (act)
+    {
+        case actWALK:
+            costes = {10, 100, 15, 50, 2, 1};
+            break;
+        case actRUN:
+            costes = {15, 150, 25, 75, 3, 1};
+            break;
+        case actTURN_L:
+            costes = {5, 30, 1, 7, 2, 1};
+            break;
+        case actTURN_SR:
+            costes = {2, 10, 1, 5, 1, 1};
+            break;
+    }
+    
+    switch (casilla)
+    {
+        case 'A':
+            return actual.tiene_bikini ? costes.bikini : costes.sinBikini;
+        case 'B':
+            return actual.tiene_zapatillas ? costes.zapatillas : costes.sinZapatillas;
+        case 'T':
+            return costes.terreno;
+        default:
+            return costes.defecto;
+    }
 }
 
 list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
