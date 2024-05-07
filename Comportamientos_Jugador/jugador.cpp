@@ -959,38 +959,72 @@ list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final
 	bool SolutionFound = (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c);
 	frontier.push(current_node);
 
-	vector<Action> acciones = {actWALK, actRUN, actTURN_L, actTURN_SR}; // Vector de acciones
-
 	while (!frontier.empty() && !SolutionFound)
 	{
-		current_node = frontier.top();
+		// Eliminamos el siguiente nodo de abtos y lo metemos en cerrados
 		frontier.pop();
-		if (!explored.insert(current_node.st).second)
+		explored.insert(current_node.st);
+
+		// Generar hijo actWALK
+		nodeN2 child_walk = current_node;
+		child_walk.st = applyN2(actWALK, current_node.st, mapa);
+		child_walk.st.cost += CalcularCoste(current_node.st, actWALK, mapa);
+		if ((explored.find(child_walk.st) == explored.end()))
 		{
-			continue; // Si el estado ya fue explorado, lo ignoramos
+			child_walk.secuencia.push_back(actWALK);
+			frontier.push(child_walk);
 		}
 
-		for (Action accion : acciones)
+		// Generar hijo actRUN
+		nodeN2 child_run = current_node;
+		child_run.st = applyN2(actRUN, current_node.st, mapa);
+		child_run.st.cost += CalcularCoste(current_node.st, actRUN, mapa);
+		if ((explored.find(child_run.st) == explored.end()))
 		{
-			nodeN2 child = current_node;
-			child.st = applyN2(accion, current_node.st, mapa);
-			int costo = CalcularCoste(child.st, accion, mapa);
-			child.st.cost += costo;
-			if (explored.find(child.st) == explored.end())
+			child_run.secuencia.push_back(actRUN);
+			frontier.push(child_run);
+		}
+		// Generar hijo actTURN_L
+		nodeN2 child_turnl = current_node;
+		child_turnl.st = applyN2(actTURN_L, current_node.st, mapa);
+		child_turnl.st.cost += CalcularCoste(current_node.st, actTURN_L, mapa);
+		if (explored.find(child_turnl.st) == explored.end())
+		{
+			child_turnl.secuencia.push_back(actTURN_L);
+			frontier.push(child_turnl);
+		}
+		// Generar hijo actTURN_SR
+		nodeN2 child_turnsr = current_node;
+		child_turnsr.st = applyN2(actTURN_SR, current_node.st, mapa);
+		child_turnsr.st.cost += CalcularCoste(current_node.st, actTURN_SR, mapa);
+		if (explored.find(child_turnsr.st) == explored.end())
+		{
+			child_turnsr.secuencia.push_back(actTURN_SR);
+			frontier.push(child_turnsr);
+		}
+
+		// Escogemos el siguiente nodo de abtos. Comprobamos si es solucion
+		// Recordemos que los abtos estan en una cola ordenada de menor a mayor coste
+		if (!SolutionFound && !frontier.empty())
+		{
+			current_node = frontier.top();
+			while (!frontier.empty() && explored.find(current_node.st) != explored.end())
 			{
-				child.secuencia.push_back(accion);
-				frontier.push(child);
+				frontier.pop();
+				if (!frontier.empty())
+					current_node = frontier.top();
+			}
+			if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c)
+			{
+				SolutionFound = true;
 			}
 		}
-
-		if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c)
-		{
-			SolutionFound = true;
-			plan = current_node.secuencia;
-			PintaPlan(current_node.secuencia); // Visualizar o imprimir el plan
-		}
 	}
-
+	if (SolutionFound)
+	{
+		plan = current_node.secuencia; // Devolvemos la secuencia de acciones hacia la solucion
+		PintaPlan(current_node.secuencia);
+	}
 	return plan;
 }
 
@@ -1028,9 +1062,21 @@ Action ComportamientoJugador::think(Sensores sensores)
 				c_state2.jugador = jugador;
 				c_state2.colaborador = colaborador;
 				c_state2.cost = 0;
-				char casilla = mapaResultado[jugador.f][jugador.c];
-				c_state2.tiene_bikini = (casilla == 'K');
-				c_state2.tiene_zapatillas = (casilla == 'D');
+				if (mapaResultado[jugador.f][jugador.c] == 'K')
+				{
+					c_state2.tiene_bikini = true;
+					c_state2.tiene_zapatillas = false;
+				}
+				else if (mapaResultado[jugador.f][jugador.c] == 'D')
+				{
+					c_state2.tiene_zapatillas = true;
+					c_state2.tiene_bikini = false;
+				}
+				else
+				{
+					c_state2.tiene_bikini = false;
+					c_state2.tiene_zapatillas = false;
+				}
 				plan = DijkstraCosteUniforme(c_state2, goal, mapaResultado);
 				break;
 			}
