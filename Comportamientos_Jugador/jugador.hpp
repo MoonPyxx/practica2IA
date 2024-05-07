@@ -13,7 +13,7 @@ struct stateN0
 
   bool operator==(const stateN0 &x) const
   {
-    if (jugador == x.jugador and colaborador == x.colaborador)
+    if (jugador == x.jugador && colaborador == x.colaborador)
     {
       return true;
     }
@@ -51,14 +51,7 @@ struct stateN1
 
   bool operator==(const stateN1 &x) const
   {
-    if (jugador == x.jugador && colaborador == x.colaborador && ultimaOrdenColaborador == x.ultimaOrdenColaborador)
-    {
-      return true;  
-    }
-    else
-    {
-      return false;
-    }
+   return jugador == x.jugador && colaborador == x.colaborador && ultimaOrdenColaborador == x.ultimaOrdenColaborador;
   }
 };  
 struct nodeN1{
@@ -70,42 +63,34 @@ struct nodeN1{
   }
   bool operator<(const nodeN1 &b) const
   {
-    if (st.jugador.f < b.st.jugador.f)
-      return true;
-    else if (st.jugador.f == b.st.jugador.f && st.jugador.c < b.st.jugador.c)
-      return true;
-    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula)
-      return true;
-    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f < b.st.colaborador.f)
-      return true;
-    else if (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c < b.st.colaborador.c)
-      return true;    
-    else if(st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c == b.st.colaborador.c && st.colaborador.brujula < b.st.colaborador.brujula)
-      return true;
-     else if(st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c == b.st.colaborador.c && st.colaborador.brujula == b.st.colaborador.brujula && st.ultimaOrdenColaborador < b.st.ultimaOrdenColaborador)
-      return true;
-    else
-    return false;
+    return 
+    st.jugador.f < b.st.jugador.f ||
+    (st.jugador.f == b.st.jugador.f && st.jugador.c < b.st.jugador.c) ||
+    (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula < b.st.jugador.brujula) ||
+    (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f < b.st.colaborador.f) ||
+    (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c < b.st.colaborador.c) ||
+    (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c == b.st.colaborador.c && st.colaborador.brujula < b.st.colaborador.brujula) ||
+    (st.jugador.f == b.st.jugador.f && st.jugador.c == b.st.jugador.c && st.jugador.brujula == b.st.jugador.brujula && st.colaborador.f == b.st.colaborador.f && st.colaborador.c == b.st.colaborador.c && st.colaborador.brujula == b.st.colaborador.brujula && st.ultimaOrdenColaborador < b.st.ultimaOrdenColaborador);
   }
 };
 struct stateN2{
   ubicacion jugador;
   ubicacion colaborador;
-  bool con_bikini;
-  bool con_zapatillas;
-  int coste;
+  bool tiene_zapatillas;
+  bool tiene_bikini;
+  int cost;
 
   bool operator== (const stateN2 &x) const{
-    return (jugador.f == x.jugador.f && jugador.c == x.jugador.c && jugador.brujula == x.jugador.brujula &&
-            con_bikini == x.con_bikini && con_zapatillas == x.con_zapatillas && coste == x.coste);
+    return jugador.f == x.jugador.f && jugador.c == x.jugador.c && jugador.brujula == x.jugador.brujula &&
+            tiene_bikini == x.tiene_bikini && tiene_zapatillas == x.tiene_zapatillas && cost == x.cost;
   }
-
-  bool operator<(const stateN2 &st) const{ // Operador para distinguir estados en set de cerrados
+// distinguir states en set
+  bool operator<(const stateN2 &st) const{ 
     return (jugador.f < st.jugador.f ||
-    jugador.f == st.jugador.f and jugador.c < st.jugador.c ||
-    jugador.f == st.jugador.f and jugador.c == st.jugador.c and jugador.brujula < st.jugador.brujula ||
-    jugador.f == st.jugador.f and jugador.c == st.jugador.c and jugador.brujula == st.jugador.brujula and con_bikini < st.con_bikini ||
-    jugador.f == st.jugador.f and jugador.c == st.jugador.c and jugador.brujula == st.jugador.brujula and con_bikini == st.con_bikini and con_zapatillas < st.con_zapatillas);
+    jugador.f == st.jugador.f && jugador.c < st.jugador.c ||
+    jugador.f == st.jugador.f && jugador.c == st.jugador.c && jugador.brujula < st.jugador.brujula ||
+    jugador.f == st.jugador.f && jugador.c == st.jugador.c && jugador.brujula == st.jugador.brujula && tiene_bikini < st.tiene_bikini ||
+    jugador.f == st.jugador.f && jugador.c == st.jugador.c && jugador.brujula == st.jugador.brujula && tiene_bikini == st.tiene_bikini && tiene_zapatillas < st.tiene_zapatillas);
   }
 };
 
@@ -116,9 +101,9 @@ struct nodeN2{
   bool operator==(const nodeN2 &n) const{
     return (st == n.st);
   }
-
-  bool operator<(const nodeN2 &n) const{ // Operador para ordenar los nodos en la priority queue
-    return (st.coste > n.st.coste);
+// distinguir nodes en cola prioridad
+  bool operator<(const nodeN2 &b) const{ 
+    return (st.cost > b.st.cost);
   }
 };
 
