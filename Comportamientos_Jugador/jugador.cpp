@@ -802,39 +802,67 @@ void actualizaItems(stateN2 &state, const ubicacion &loc, const vector<vector<un
         state.tiene_bikini = false;
     }
 }
-stateN2 applyN2(const Action &a, const stateN2 &st, const vector<vector<unsigned char>> &mapa) {
-    stateN2 st_result = st;
-    ubicacion sig_ubicacion, sig_ubicacion2;
+stateN2 applyN2 (const Action &a, const stateN2 &st, const vector<vector<unsigned char>> &mapa){
+ stateN2 st_result = st;
+ ubicacion sig_ubicacion, sig_ubicacion2;
 
-	switch(a){
-		case actWALK:
-		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaLibreYTransitable){
-			st_result.jugador = sig_ubicacion;
-			actualizaItems(st_result, sig_ubicacion, mapa);
-		}
-		break;
-		case actRUN:
-		sig_ubicacion = NextCasilla(st.jugador);
-		if (casillaLibreYTransitable){
-			st_result.jugador = sig_ubicacion;
-			actualizaItems(st_result, sig_ubicacion, mapa);
-			sig_ubicacion2 = NextCasilla(sig_ubicacion);
-			if (casillaLibreYTransitable){
-				st_result.jugador = sig_ubicacion2;
-				actualizaItems(st_result, sig_ubicacion2, mapa);
-			}
-		}
-		break;
-		case actTURN_L:
-		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
-		break;
-		case actTURN_SR:
-		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
-		break;
-	}
-	return st_result;
-	}
+ switch(a){
+  case actWALK:
+   sig_ubicacion = NextCasilla(st.jugador);
+   if (casillaTransitable(sig_ubicacion, mapa) &&
+    !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c)){
+    st_result.jugador = sig_ubicacion;
+    // Actualizamos las variables tiene_bikini y tiene_zapatillas
+    if (mapa[sig_ubicacion.f][sig_ubicacion.c] == 'K'){
+     st_result.tiene_bikini = true;
+     st_result.tiene_zapatillas = false;
+    }
+    if (mapa[sig_ubicacion.f][sig_ubicacion.c] == 'D'){
+     st_result.tiene_zapatillas = true;
+     st_result.tiene_bikini = false;
+    }
+   }   
+   break;
+
+      case actRUN:
+        sig_ubicacion = NextCasilla(st.jugador);
+        if(casillaTransitable(sig_ubicacion, mapa) &&
+          !(sig_ubicacion.f == st.colaborador.f && sig_ubicacion.c == st.colaborador.c)){
+          sig_ubicacion2 = NextCasilla(sig_ubicacion);
+          if (mapa[sig_ubicacion.f][sig_ubicacion.c] == 'K'){
+              st_result.tiene_bikini = true;
+              st_result.tiene_zapatillas = false;
+            }
+            if (mapa[sig_ubicacion.f][sig_ubicacion.c] == 'D'){
+              st_result.tiene_zapatillas = true;
+              st_result.tiene_bikini = false;
+            }
+          if(casillaTransitable(sig_ubicacion2, mapa)
+            && !(sig_ubicacion2.f == st.colaborador.f && sig_ubicacion2.c == st.colaborador.c)){
+            st_result.jugador = sig_ubicacion2;
+            if (mapa[sig_ubicacion.f][sig_ubicacion.c] == 'K'){
+              st_result.tiene_bikini = true;
+              st_result.tiene_zapatillas = false;
+            }
+            if (mapa[sig_ubicacion.f][sig_ubicacion.c] == 'D'){
+              st_result.tiene_zapatillas = true;
+              st_result.tiene_bikini = false;
+            }
+          }
+        }
+      break;
+  case actTURN_L:
+   st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula+6)%8);
+   break;
+  case actTURN_SR:
+      
+   st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula+1)%8);
+   break;
+        
+ }
+
+ return st_result;
+}
 
 
 int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigned char>> &mapa){
@@ -918,49 +946,75 @@ int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigne
 	return coste;
 }
 
-list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
-{
-    nodeN2 current_node;
-    priority_queue<nodeN2> frontier;
-    set<stateN2> explored;
-    list<Action> plan;
-	int iteraciones = 0, abiertos = 1, cerrados = 0;
-    current_node.st = inicio;
-	current_node.st.cost = 0;
-    bool SolutionFound = (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c);
-    frontier.push(current_node);
+list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa){
+	nodeN2 current_node;
+	priority_queue<nodeN2> frontier;
+	set<stateN2> explored;
+	list<Action> plan;
+	current_node.st = inicio;
+	bool SolutionFound = (current_node.st.jugador.f ==final.f && current_node.st.jugador.c ==final.c);
+	frontier.push(current_node);
 
-    while (!frontier.empty() && !SolutionFound)
-    {
-        current_node = frontier.top();
-        frontier.pop();
-		cerrados++;
-        if (!explored.insert(current_node.st).second)
-            continue; 
+	while(!frontier.empty() && !SolutionFound){
+		// Eliminamos el siguiente nodo de abtos y lo metemos en cerrados
+		frontier.pop();
+		explored.insert(current_node.st);
 
-        vector<Action> acciones = {actWALK, actRUN, actTURN_L, actTURN_SR};
-        for (Action accion : acciones)
-        {
-            nodeN2 hijo = current_node;
-            hijo.st = applyN2(accion, current_node.st, mapa);
-                hijo.st.cost += CalcularCoste(hijo.st, accion, mapa);
-                if (explored.find(hijo.st) == explored.end())
-                {
-                    hijo.secuencia.push_back(accion);
-                    frontier.push(hijo);
-                }
-        }
+		// Generar hijo actWALK
+		nodeN2 child_walk = current_node;
+		child_walk.st = applyN2(actWALK, current_node.st, mapa);
+		child_walk.st.cost += CalcularCoste(current_node.st, actWALK, mapa);
+		if ((explored.find(child_walk.st) == explored.end())){
+			child_walk.secuencia.push_back(actWALK);
+			frontier.push(child_walk);
+		}
 
-        if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c)
-        {
-            SolutionFound = true;
-            plan = current_node.secuencia;
-            PintaPlan(current_node.secuencia); // Print or visualize the plan
-        }
-    }
+    //Generar hijo actRUN
+    nodeN2 child_run = current_node;
+		child_run.st = applyN2(actRUN, current_node.st, mapa);
+		child_run.st.cost += CalcularCoste(current_node.st, actRUN, mapa);
+		if ((explored.find(child_run.st) == explored.end())){
+			child_run.secuencia.push_back(actRUN);
+			frontier.push(child_run);
+		}
+		// Generar hijo actTURN_L
+		nodeN2 child_turnl = current_node;
+		child_turnl.st = applyN2(actTURN_L, current_node.st, mapa);
+		child_turnl.st.cost += CalcularCoste(current_node.st, actTURN_L, mapa);
+		if (explored.find(child_turnl.st) == explored.end()){
+			child_turnl.secuencia.push_back(actTURN_L);
+			frontier.push(child_turnl);
+		}
+		// Generar hijo actTURN_SR
+		nodeN2 child_turnsr = current_node;
+		child_turnsr.st = applyN2(actTURN_SR, current_node.st, mapa);
+		child_turnsr.st.cost += CalcularCoste(current_node.st, actTURN_SR, mapa);
+		if (explored.find(child_turnsr.st) == explored.end()){
+			child_turnsr.secuencia.push_back(actTURN_SR);
+			frontier.push(child_turnsr);
+		}
 
-    return plan;
+		// Escogemos el siguiente nodo de abtos. Comprobamos si es solucion
+		// Recordemos que los abtos estan en una cola ordenada de menor a mayor coste
+		if (!SolutionFound && !frontier.empty()){
+			current_node = frontier.top();
+			while(!frontier.empty() && explored.find(current_node.st) != explored.end()){
+				frontier.pop();
+				if (!frontier.empty())
+					current_node = frontier.top();
+			}
+			if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c){
+				SolutionFound = true;
+			}
+		}
+	}
+	if (SolutionFound){
+		plan = current_node.secuencia; // Devolvemos la secuencia de acciones hacia la solucion
+    PintaPlan(current_node.secuencia);
+  }
+	return plan;
 }
+
 
 
 Action ComportamientoJugador::think(Sensores sensores)
