@@ -994,6 +994,9 @@ Action ComportamientoJugador::think(Sensores sensores)
 			case 2:{
 				c_state2.jugador = jugador;
 				c_state2.colaborador = colaborador;
+				c_state2.cost = 0;
+				c_state2.tiene_bikini = false;
+				c_state2.tiene_zapatillas = false;
 				plan = DijkstraCosteUniforme(c_state2, goal, mapaResultado);
 				break;
 			}
