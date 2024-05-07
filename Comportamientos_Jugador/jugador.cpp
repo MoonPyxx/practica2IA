@@ -781,137 +781,109 @@ stateN2 applyN2(const Action &a, const stateN2 &st, const vector<vector<unsigned
 
     if (!dentroMapa(sig_ubicacion, mapa)) return st_result;
 
-    switch (a) {
-    case actWALK:
-    case actRUN:
-        if (casillaLibreYTransitable(sig_ubicacion, st.colaborador, mapa)) {
-            st_result.jugador = sig_ubicacion;
-            actualizaItems(st_result, sig_ubicacion, mapa);
+    if (casillaLibreYTransitable(sig_ubicacion, st.colaborador, mapa)) {
+        st_result.jugador = sig_ubicacion;
+        actualizaItems(st_result, sig_ubicacion, mapa);
 
-            if (a == actRUN) {
-                sig_ubicacion = NextCasilla(sig_ubicacion);
-                if (dentroMapa(sig_ubicacion, mapa) && casillaLibreYTransitable(sig_ubicacion, st.colaborador, mapa)) {
-                    st_result.jugador = sig_ubicacion;
-                    actualizaItems(st_result, sig_ubicacion, mapa);
-                }
+        if (a == actRUN) {
+            ubicacion sig_ubicacion2 = NextCasilla(sig_ubicacion);
+            if (dentroMapa(sig_ubicacion2, mapa) && casillaLibreYTransitable(sig_ubicacion2, st.colaborador, mapa)) {
+                st_result.jugador = sig_ubicacion2;
+                actualizaItems(st_result, sig_ubicacion2, mapa);
             }
         }
-        break;
-    case actTURN_L:
-        st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 6) % 8);
-        break;
-    case actTURN_SR:
-        st_result.jugador.brujula = static_cast<Orientacion>((st_result.jugador.brujula + 1) % 8);
-        break;
+    }
+
+    if (a == actTURN_L) {
+        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
+    } else if (a == actTURN_SR) {
+        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
     }
 
     return st_result;
 }
 
-int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigned char>> &mapa)
-	{
-		if (!dentroMapa(actual.jugador, mapa) == false){
-		unsigned char casilla = mapa[actual.jugador.f][actual.jugador.c];
-		int coste = 0;
-		switch (act)
-		{
+
+int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigned char>> &mapa){
+	unsigned char casilla = mapa[actual.jugador.f][actual.jugador.c];
+	int coste = 0;
+	switch(act){
 		case actWALK:
-			switch (casilla)
-			{
-			case 'A':
-				if (actual.tiene_bikini)
-					coste = 10;
-				else
-					coste = 100;
-				break;
-			case 'B':
-				if (actual.tiene_zapatillas)
-					coste = 15;
-				else
-					coste = 50;
-				break;
-			case 'T':
-				coste = 2;
-				break;
-			default:
-				coste = 1;
-				break;
+			switch(casilla){
+				case 'A':
+					if (actual.tiene_bikini) coste = 10;
+					else coste = 100;
+					break;
+				case 'B':
+					if (actual.tiene_zapatillas) coste = 15;
+					else coste = 50;
+					break;
+				case 'T':
+					coste = 2;
+					break;
+				default:
+					coste = 1;
+					break;
 			}
 			break;
 		case actRUN:
-			switch (casilla)
-			{
-			case 'A':
-				if (actual.tiene_bikini)
-					coste = 15;
-				else
-					coste = 150;
-				break;
-			case 'B':
-				if (actual.tiene_zapatillas)
-					coste = 25;
-				else
-					coste = 75;
-				break;
-			case 'T':
-				coste = 3;
-				break;
-			default:
-				coste = 1;
-				break;
+			switch(casilla){
+				case 'A':
+					if (actual.tiene_bikini) coste = 15;
+					else coste = 150;
+					break;
+				case 'B':
+					if (actual.tiene_zapatillas) coste = 25;
+					else coste = 75;
+					break;
+				case 'T':
+					coste = 3;
+					break;
+				default:
+					coste = 1;
+					break;
 			}
 			break;
-		case actTURN_L:
-			switch (casilla)
-			{
-			case 'A':
-				if (actual.tiene_bikini)
-					coste = 5;
-				else
-					coste = 30;
-				break;
-			case 'B':
-				if (actual.tiene_zapatillas)
+    case actTURN_L:
+			switch(casilla){
+				case 'A':
+					if (actual.tiene_bikini) coste = 5;
+					else coste = 30;
+					break;
+				case 'B':
+					if (actual.tiene_zapatillas) coste = 1;
+					else coste = 7;
+					break;
+				case 'T':
+					coste = 2;
+					break;
+				default:
 					coste = 1;
-				else
-					coste = 7;
-				break;
-			case 'T':
-				coste = 2;
-				break;
-			default:
-				coste = 1;
-				break;
+					break;
 			}
 			break;
 		case actTURN_SR:
-			switch (casilla)
-			{
-			case 'A':
-				if (actual.tiene_bikini)
-					coste = 2;
-				else
-					coste = 10;
-				break;
-			case 'B':
-				if (actual.tiene_zapatillas)
-					coste = 1;
-				else
-					coste = 5;
-				break;
-			case 'T':
-				coste = 1;
-				break;
-			default:
-				coste = 1;
-				break;
-			}
-			break;
-		}
-		return coste;
+      switch(casilla){
+          case 'A':
+            if (actual.tiene_bikini) coste = 2;
+            else coste = 10;
+            break;
+          case 'B':
+            if (actual.tiene_zapatillas) coste = 1;
+            else coste = 5;
+            break;
+          case 'T':
+            coste = 1;
+            break;
+          default:
+            coste = 1;
+            break;
+        }
+        break;
+		
 	}
-	}
-
+	return coste;
+}
 
 list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
 {

@@ -116,6 +116,7 @@ public:
   }
   ComportamientoJugador(std::vector<std::vector<unsigned char>> mapaR) : Comportamiento(mapaR)
   {
+    // Inicializar Variables de Estado
     hayPlan = false;
 
   }
