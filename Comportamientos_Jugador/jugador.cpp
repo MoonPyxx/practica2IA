@@ -951,81 +951,52 @@ int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigne
 
 list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final, const vector<vector<unsigned char>> &mapa)
 {
-	nodeN2 current_node;
-	priority_queue<nodeN2> frontier;
-	set<stateN2> explored;
-	list<Action> plan;
-	current_node.st = inicio;
-	bool SolutionFound = (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c);
-	frontier.push(current_node);
+    nodeN2 current_node;
+    priority_queue<nodeN2> frontier;
+    set<stateN2> explored;
+    list<Action> plan;
+    current_node.st = inicio;
+    bool SolutionFound = (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c);
+    frontier.push(current_node);
 
-	while (!frontier.empty() && !SolutionFound)
-	{
-		// Eliminamos el siguiente nodo de abtos y lo metemos en cerrados
-		frontier.pop();
-		explored.insert(current_node.st);
+    while (!frontier.empty() && !SolutionFound)
+    {
+        frontier.pop();
+        explored.insert(current_node.st);
 
-		// Generar hijo actWALK
-		nodeN2 child_walk = current_node;
-		child_walk.st = applyN2(actWALK, current_node.st, mapa);
-		child_walk.st.cost += CalcularCoste(current_node.st, actWALK, mapa);
-		if ((explored.find(child_walk.st) == explored.end()))
-		{
-			child_walk.secuencia.push_back(actWALK);
-			frontier.push(child_walk);
-		}
-
-		// Generar hijo actRUN
-		nodeN2 child_run = current_node;
-		child_run.st = applyN2(actRUN, current_node.st, mapa);
-		child_run.st.cost += CalcularCoste(current_node.st, actRUN, mapa);
-		if ((explored.find(child_run.st) == explored.end()))
-		{
-			child_run.secuencia.push_back(actRUN);
-			frontier.push(child_run);
-		}
-		// Generar hijo actTURN_L
-		nodeN2 child_turnl = current_node;
-		child_turnl.st = applyN2(actTURN_L, current_node.st, mapa);
-		child_turnl.st.cost += CalcularCoste(current_node.st, actTURN_L, mapa);
-		if (explored.find(child_turnl.st) == explored.end())
-		{
-			child_turnl.secuencia.push_back(actTURN_L);
-			frontier.push(child_turnl);
-		}
-		// Generar hijo actTURN_SR
-		nodeN2 child_turnsr = current_node;
-		child_turnsr.st = applyN2(actTURN_SR, current_node.st, mapa);
-		child_turnsr.st.cost += CalcularCoste(current_node.st, actTURN_SR, mapa);
-		if (explored.find(child_turnsr.st) == explored.end())
-		{
-			child_turnsr.secuencia.push_back(actTURN_SR);
-			frontier.push(child_turnsr);
-		}
-
-		// Escogemos el siguiente nodo de abtos. Comprobamos si es solucion
-		// Recordemos que los abtos estan en una cola ordenada de menor a mayor coste
-		if (!SolutionFound && !frontier.empty())
-		{
-			current_node = frontier.top();
-			while (!frontier.empty() && explored.find(current_node.st) != explored.end())
-			{
-				frontier.pop();
-				if (!frontier.empty())
-					current_node = frontier.top();
-			}
-			if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c)
-			{
-				SolutionFound = true;
-			}
-		}
-	}
-	if (SolutionFound)
-	{
-		plan = current_node.secuencia; // Devolvemos la secuencia de acciones hacia la solucion
-		PintaPlan(current_node.secuencia);
-	}
-	return plan;
+        Action actions[] = {actWALK, actRUN, actTURN_L, actTURN_SR};
+        for (Action action : actions)
+        {
+            nodeN2 child = current_node;
+            child.st = applyN2(action, current_node.st, mapa);
+            child.st.cost += CalcularCoste(current_node.st, action, mapa);
+            if (explored.find(child.st) == explored.end())
+            {
+                child.secuencia.push_back(action);
+                frontier.push(child);
+            }
+        }
+        if (!SolutionFound && !frontier.empty())
+        {
+            current_node = frontier.top();
+            while (!frontier.empty() && explored.find(current_node.st) != explored.end())
+            {
+                frontier.pop();
+                if (!frontier.empty())
+                    current_node = frontier.top();
+            }
+            if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c)
+            {
+                SolutionFound = true;
+            }
+        }
+    }
+    if (SolutionFound)
+    {
+        plan = current_node.secuencia; // Devolvemos la secuencia de acciones hacia la solucion
+        PintaPlan(current_node.secuencia);
+    }
+    return plan;
 }
 
 Action ComportamientoJugador::think(Sensores sensores)
