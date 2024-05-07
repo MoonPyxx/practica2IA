@@ -105,6 +105,9 @@ struct nodeN2{
   bool operator<(const nodeN2 &b) const{ 
     return (st.cost > b.st.cost);
   }
+    bool operator>(const nodeN2 &b) const{ 
+    return (st.cost > b.st.cost);
+  }
 };
 
 
@@ -127,6 +130,8 @@ public:
   int interact(Action accion, int valor);
   void VisualizaPlan(const stateN0 &st, const list<Action> &plan);
   void VisualizaPlanN1(const stateN1 &st, const list<Action> &plan);
+  void VisualizaPlanN2(const stateN2 &st, const list<Action> &plan);
+
 
 private:
   // Declarar Variables de Estado

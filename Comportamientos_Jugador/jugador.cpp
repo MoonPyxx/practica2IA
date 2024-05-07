@@ -12,7 +12,7 @@ bool casillaTransitable(const ubicacion &x, const vector<vector<unsigned char>> 
 {
 	return (mapa[x.f][x.c] != 'P' && mapa[x.f][x.c] != 'M');
 }
-// nivel 1
+// nivel 1 y 2
 bool casillaLibreYTransitable(const ubicacion &casilla, const ubicacion &otroAgente, const vector<vector<unsigned char>> &mapa)
 {
 	return (mapa[casilla.f][casilla.c] != 'P' && mapa[casilla.f][casilla.c] != 'M') && (casilla.f != otroAgente.f || casilla.c != otroAgente.c);
@@ -762,10 +762,37 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 	}
 }
 // NIVEL 2
-bool dentroMapa(const ubicacion &pos, const vector<vector<unsigned char>> &mapa) {
-    return pos.f >= 0 && pos.f < mapa.size() && pos.c >= 0 && pos.c < mapa[0].size();
-}
+void ComportamientoJugador::VisualizaPlanN2(const stateN2 &st, const list<Action> &plan)
+{
+	AnulaMatriz(mapaConPlan);
+	stateN2 cst = st;
 
+	auto it = plan.begin();
+
+	while (it != plan.end())
+	{
+		switch (*it)
+		{
+		case actRUN:
+			cst.jugador = NextCasilla(cst.jugador);
+			mapaConPlan[cst.jugador.f][cst.jugador.c] = 3;
+			cst.jugador = NextCasilla(cst.jugador);
+			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
+			break;
+		case actWALK:
+			cst.jugador = NextCasilla(cst.jugador);
+			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
+			break;
+		case actTURN_SR:
+			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 1) % 8);
+			break;
+		case actTURN_L:
+			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 6) % 8);
+			break;
+		}
+		it++;
+	}
+}
 void actualizaItems(stateN2 &state, const ubicacion &loc, const vector<vector<unsigned char>> &mapa) {
     if (mapa[loc.f][loc.c] == 'K') {
         state.tiene_bikini = true;
@@ -777,31 +804,37 @@ void actualizaItems(stateN2 &state, const ubicacion &loc, const vector<vector<un
 }
 stateN2 applyN2(const Action &a, const stateN2 &st, const vector<vector<unsigned char>> &mapa) {
     stateN2 st_result = st;
-    ubicacion sig_ubicacion = NextCasilla(st.jugador);
+    ubicacion sig_ubicacion, sig_ubicacion2;
 
-    if (!dentroMapa(sig_ubicacion, mapa)) return st_result;
-
-    if (casillaLibreYTransitable(sig_ubicacion, st.colaborador, mapa)) {
-        st_result.jugador = sig_ubicacion;
-        actualizaItems(st_result, sig_ubicacion, mapa);
-
-        if (a == actRUN) {
-            ubicacion sig_ubicacion2 = NextCasilla(sig_ubicacion);
-            if (dentroMapa(sig_ubicacion2, mapa) && casillaLibreYTransitable(sig_ubicacion2, st.colaborador, mapa)) {
-                st_result.jugador = sig_ubicacion2;
-                actualizaItems(st_result, sig_ubicacion2, mapa);
-            }
-        }
-    }
-
-    if (a == actTURN_L) {
-        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
-    } else if (a == actTURN_SR) {
-        st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
-    }
-
-    return st_result;
-}
+	switch(a){
+		case actWALK:
+		sig_ubicacion = NextCasilla(st.jugador);
+		if (casillaLibreYTransitable){
+			st_result.jugador = sig_ubicacion;
+			actualizaItems(st_result, sig_ubicacion, mapa);
+		}
+		break;
+		case actRUN:
+		sig_ubicacion = NextCasilla(st.jugador);
+		if (casillaLibreYTransitable){
+			st_result.jugador = sig_ubicacion;
+			actualizaItems(st_result, sig_ubicacion, mapa);
+			sig_ubicacion2 = NextCasilla(sig_ubicacion);
+			if (casillaLibreYTransitable){
+				st_result.jugador = sig_ubicacion2;
+				actualizaItems(st_result, sig_ubicacion2, mapa);
+			}
+		}
+		break;
+		case actTURN_L:
+		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
+		break;
+		case actTURN_SR:
+		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
+		break;
+	}
+	return st_result;
+	}
 
 
 int CalcularCoste(const stateN2 &actual, Action act, const vector<vector<unsigned char>> &mapa){
@@ -910,16 +943,12 @@ list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final
         {
             nodeN2 hijo = current_node;
             hijo.st = applyN2(accion, current_node.st, mapa);
-            if (dentroMapa(hijo.st.jugador, mapa))
-            {
-				int costo = CalcularCoste(hijo.st, accion, mapa);
-                hijo.st.cost += costo;
+                hijo.st.cost += CalcularCoste(hijo.st, accion, mapa);
                 if (explored.find(hijo.st) == explored.end())
                 {
                     hijo.secuencia.push_back(accion);
                     frontier.push(hijo);
                 }
-            }
         }
 
         if (current_node.st.jugador.f == final.f && current_node.st.jugador.c == final.c)
@@ -967,8 +996,16 @@ Action ComportamientoJugador::think(Sensores sensores)
 				c_state2.jugador = jugador;
 				c_state2.colaborador = colaborador;
 				c_state2.cost = 0;
-				c_state2.tiene_bikini = false;
-				c_state2.tiene_zapatillas = false;
+				if(mapaResultado[jugador.f][jugador.c] == 'K'){
+					c_state2.tiene_bikini = true;
+					c_state2.tiene_zapatillas = false;
+				}else if(mapaResultado[jugador.f][jugador.c] == 'D'){
+					c_state2.tiene_zapatillas = true;
+					c_state2.tiene_bikini = false;
+				}else{
+					c_state2.tiene_bikini = false;
+					c_state2.tiene_zapatillas = false;
+				}
 				plan = DijkstraCosteUniforme(c_state2, goal, mapaResultado);
 				break;
 			}
@@ -982,9 +1019,13 @@ Action ComportamientoJugador::think(Sensores sensores)
 				{
 					VisualizaPlan(c_state, plan);
 				}
-				else
+				else if(sensores.nivel == 1)
 				{
 					VisualizaPlanN1(c_state1, plan);
+				}
+				else if(sensores.nivel == 2)
+				{
+					VisualizaPlanN2(c_state2, plan);
 				}
 				hayPlan = true;
 			}
