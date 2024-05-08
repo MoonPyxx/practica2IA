@@ -686,52 +686,125 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 	list<nodeN1> frontier;
 	set<nodeN1> explored;
 	list<Action> plan;
-	int iteraciones = 0;
-	int abiertos = 1; // Comienza con el nodo inicial ya en la frontera
-	int cerrados = 0;
 	current_node.st = inicio;
-	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
+	bool solutionFound = (current_node.st.colaborador.f == final.f &&
+						  current_node.st.colaborador.c == final.c);
 	frontier.push_back(current_node);
 
-	while (!frontier.empty() && !SolutionFound)
+	while (!frontier.empty() && !solutionFound)
 	{
-		current_node = frontier.front();
 		frontier.pop_front();
-		cerrados++;
 		explored.insert(current_node);
 
-		// Determinar las acciones apropiadas según la visibilidad del colaborador
-		vector<Action> acciones = {act_CLB_WALK, act_CLB_TURN_SR, act_CLB_STOP, actWALK, actRUN, actTURN_L, actTURN_SR, actIDLE};
-
-		for (auto accion : acciones)
+		if (ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
 		{
-			if(accion == act_CLB_WALK && !ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
-				continue;
-			if (accion == act_CLB_TURN_SR && !ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
-				continue;
-			if (accion == act_CLB_STOP && !ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
-				continue;
-			nodeN1 hijo = current_node;
-			hijo.st = applyN1(accion, current_node.st, mapa);
-			hijo.secuencia.push_back(accion);
-
-			// Comprobar si se ha alcanzado la solución
-			if (hijo.st.colaborador.f == final.f && hijo.st.colaborador.c == final.c)
+			nodeN1 child_clb_walk = current_node;
+			child_clb_walk.st = applyN1(act_CLB_WALK, current_node.st, mapa);
+			child_clb_walk.secuencia.push_back(act_CLB_WALK);
+			if (child_clb_walk.st.colaborador.f == final.f && child_clb_walk.st.colaborador.c == final.c)
 			{
-				current_node = hijo;
-				SolutionFound = true;
-				break;
+				current_node = child_clb_walk;
+				solutionFound = true;
+			}
+			else if (explored.find(child_clb_walk) == explored.end())
+			{
+				frontier.push_back(child_clb_walk);
 			}
 
-			// Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
-			if (explored.find(hijo) == explored.end() && !(hijo.st == current_node.st))
+			if (!solutionFound)
 			{
-				frontier.push_back(hijo);
-				abiertos++;
+				nodeN1 child_clb_turnsr = current_node;
+				child_clb_turnsr.st = applyN1(act_CLB_TURN_SR, current_node.st, mapa);
+				child_clb_turnsr.secuencia.push_back(act_CLB_TURN_SR);
+				if (explored.find(child_clb_turnsr) == explored.end())
+				{
+					frontier.push_back(child_clb_turnsr);
+				}
+
+				nodeN1 child_clb_stop = current_node;
+				child_clb_stop.st = applyN1(act_CLB_STOP, current_node.st, mapa);
+				if(explored.find(child_clb_stop) == explored.end())
+					frontier.push_back(child_clb_stop);
 			}
 		}
 
-		if (!SolutionFound && !frontier.empty())
+		if (!solutionFound)
+		{
+			nodeN1 child_idle = current_node;
+			child_idle.st = applyN1(actIDLE, current_node.st, mapa);
+			child_idle.secuencia.push_back(actIDLE);
+			if (child_idle.st.colaborador.f == final.f && child_idle.st.colaborador.c == final.c)
+			{
+				current_node = child_idle;
+				solutionFound = true;
+			}
+			else if (explored.find(child_idle) == explored.end())
+			{
+				frontier.push_back(child_idle);
+			}
+		}
+
+		if (!solutionFound)
+		{
+			nodeN1 child_walk = current_node;
+			child_walk.st = applyN1(actWALK, current_node.st, mapa);
+			child_walk.secuencia.push_back(actWALK);
+			if (child_walk.st.colaborador.f == final.f && child_walk.st.colaborador.c == final.c)
+			{
+				current_node = child_walk;
+				solutionFound = true;
+			}
+			else if (explored.find(child_walk) == explored.end())
+			{
+				frontier.push_back(child_walk);
+			}
+		}
+
+		if (!solutionFound)
+		{
+			nodeN1 child_run = current_node;
+			child_run.st = applyN1(actRUN, current_node.st, mapa);
+			child_run.secuencia.push_back(actRUN);
+			if (child_run.st.colaborador.f == final.f && child_run.st.colaborador.c == final.c)
+			{
+				current_node = child_run;
+				solutionFound = true;
+			}
+			else if (explored.find(child_run) == explored.end())
+			{
+				frontier.push_back(child_run);
+			}
+		}
+
+		if (!solutionFound)
+		{
+			nodeN1 child_turnl = current_node;
+			child_turnl.st = applyN1(actTURN_L, current_node.st, mapa);
+			child_turnl.secuencia.push_back(actTURN_L);
+			if (child_turnl.st.colaborador.f == final.f && child_turnl.st.colaborador.c == final.c)
+			{
+				current_node = child_turnl;
+				solutionFound = true;
+			}
+			else if (explored.find(child_turnl) == explored.end())
+			{
+				frontier.push_back(child_turnl);
+			}
+			nodeN1 child_turnsr = current_node;
+			child_turnsr.st = applyN1(actTURN_SR, current_node.st, mapa);
+			child_turnsr.secuencia.push_back(actTURN_SR);
+			if (child_turnsr.st.colaborador.f == final.f && child_turnsr.st.colaborador.c == final.c)
+			{
+				current_node = child_turnsr;
+				solutionFound = true;
+			}
+			else if (explored.find(child_turnsr) == explored.end())
+			{
+				frontier.push_back(child_turnsr);
+			}
+		}
+
+		if (!solutionFound && !frontier.empty())
 		{
 			current_node = frontier.front();
 			while (!frontier.empty() && explored.find(current_node) != explored.end())
@@ -741,19 +814,16 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 					current_node = frontier.front();
 			}
 		}
-		iteraciones++;
 	}
 
-	if (SolutionFound)
+	if (solutionFound)
 	{
 		plan = current_node.secuencia;
 		cout << "Encontrado un plan: ";
 		PintaPlan(current_node.secuencia);
-		cout << "Abiertos: " << abiertos << endl;
-		cout << "Cerrados: " << cerrados << endl;
-		cout << "Iteraciones: " << iteraciones << endl;
-		return plan;
 	}
+
+	return plan;
 }
 // NIVEL 2
 void ComportamientoJugador::VisualizaPlanN2(const stateN2 &st, const list<Action> &plan)
@@ -955,6 +1025,7 @@ Action ComportamientoJugador::think(Sensores sensores)
 			case 0:
 				c_state.jugador = jugador;
 				c_state.colaborador = colaborador;
+				c_state.ultimaOrdenColaborador = act_CLB_STOP;
 				plan = AnchuraSoloJugador(c_state, goal, mapaResultado);
 				break;
 			case 1:
