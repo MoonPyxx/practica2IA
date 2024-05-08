@@ -650,8 +650,6 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		}
 		break;
 	case actIDLE:
-		sig_ubicacion = st.jugador;
-		st_result.jugador = sig_ubicacion;
 		break;
 	case actTURN_L:
 		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 6) % 8);
@@ -662,28 +660,19 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 
 	// Acciones del colaborador
 	case act_CLB_WALK:
-		if (ColaboradorVisible(st_result.jugador, st_result.colaborador))
-		{
 			sig_ubicacion = NextCasilla(st.colaborador);
 			if (casillaLibreYTransitable(sig_ubicacion, st.jugador, mapa))
 			{
 				st_result.colaborador = sig_ubicacion;
 				st_result.ultimaOrdenColaborador = a;
 			}
-		}
 		break;
 	case act_CLB_TURN_SR:
-		if (ColaboradorVisible(st_result.jugador, st_result.colaborador))
-		{
 			st_result.colaborador.brujula = static_cast<Orientacion>((st.colaborador.brujula + 1) % 8);
 			st_result.ultimaOrdenColaborador = a;
-		}
 		break;
 	case act_CLB_STOP:
-		if (ColaboradorVisible(st_result.jugador, st_result.colaborador))
-		{
 			st_result.ultimaOrdenColaborador = a;
-		}
 		break;
 	}
 
@@ -716,6 +705,12 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 
 		for (auto accion : acciones)
 		{
+			if(accion == act_CLB_WALK && !ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
+				continue;
+			if (accion == act_CLB_TURN_SR && !ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
+				continue;
+			if (accion == act_CLB_STOP && !ColaboradorVisible(current_node.st.jugador, current_node.st.colaborador))
+				continue;
 			nodeN1 hijo = current_node;
 			hijo.st = applyN1(accion, current_node.st, mapa);
 			hijo.secuencia.push_back(accion);
@@ -749,7 +744,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 		iteraciones++;
 	}
 
-	if (SolutionFound || (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c))
+	if (SolutionFound)
 	{
 		plan = current_node.secuencia;
 		cout << "Encontrado un plan: ";
