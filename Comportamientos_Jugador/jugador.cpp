@@ -682,10 +682,10 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 	set<nodeN1> explored;
 	list<Action> plan;
 	current_node.st = inicio;
-	bool solutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
+	bool SolutionFound = (current_node.st.colaborador.f == final.f && current_node.st.colaborador.c == final.c);
 	frontier.push_back(current_node);
 
-	while (!frontier.empty() && !solutionFound)
+	while (!frontier.empty() && !SolutionFound)
 	{
 		frontier.pop_front();
 		explored.insert(current_node);
@@ -698,14 +698,14 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (child_clb_walk.st.colaborador.f == final.f && child_clb_walk.st.colaborador.c == final.c)
 			{
 				current_node = child_clb_walk;
-				solutionFound = true;
+				SolutionFound = true;
 			}
 			else if (explored.find(child_clb_walk) == explored.end())
 			{
 				frontier.push_back(child_clb_walk);
 			}
 
-			if (!solutionFound)
+			if (!SolutionFound)
 			{
 				nodeN1 child_clb_turnsr = current_node;
 				child_clb_turnsr.st = applyN1(act_CLB_TURN_SR, current_node.st, mapa);
@@ -722,7 +722,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			}
 		}
 
-		if (!solutionFound)
+		if (!SolutionFound)
 		{
 			nodeN1 child_idle = current_node;
 			child_idle.st = applyN1(actIDLE, current_node.st, mapa);
@@ -730,7 +730,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (child_idle.st.colaborador.f == final.f && child_idle.st.colaborador.c == final.c)
 			{
 				current_node = child_idle;
-				solutionFound = true;
+				SolutionFound = true;
 			}
 			else if (explored.find(child_idle) == explored.end())
 			{
@@ -738,7 +738,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			}
 		}
 
-		if (!solutionFound)
+		if (!SolutionFound)
 		{
 			nodeN1 child_walk = current_node;
 			child_walk.st = applyN1(actWALK, current_node.st, mapa);
@@ -746,7 +746,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (child_walk.st.colaborador.f == final.f && child_walk.st.colaborador.c == final.c)
 			{
 				current_node = child_walk;
-				solutionFound = true;
+				SolutionFound = true;
 			}
 			else if (explored.find(child_walk) == explored.end())
 			{
@@ -754,7 +754,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			}
 		}
 
-		if (!solutionFound)
+		if (!SolutionFound)
 		{
 			nodeN1 child_run = current_node;
 			child_run.st = applyN1(actRUN, current_node.st, mapa);
@@ -762,7 +762,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (child_run.st.colaborador.f == final.f && child_run.st.colaborador.c == final.c)
 			{
 				current_node = child_run;
-				solutionFound = true;
+				SolutionFound = true;
 			}
 			else if (explored.find(child_run) == explored.end())
 			{
@@ -770,7 +770,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			}
 		}
 
-		if (!solutionFound)
+		if (!SolutionFound)
 		{
 			nodeN1 child_turnl = current_node;
 			child_turnl.st = applyN1(actTURN_L, current_node.st, mapa);
@@ -778,7 +778,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (child_turnl.st.colaborador.f == final.f && child_turnl.st.colaborador.c == final.c)
 			{
 				current_node = child_turnl;
-				solutionFound = true;
+				SolutionFound = true;
 			}
 			else if (explored.find(child_turnl) == explored.end())
 			{
@@ -790,7 +790,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			if (child_turnsr.st.colaborador.f == final.f && child_turnsr.st.colaborador.c == final.c)
 			{
 				current_node = child_turnsr;
-				solutionFound = true;
+				SolutionFound = true;
 			}
 			else if (explored.find(child_turnsr) == explored.end())
 			{
@@ -798,7 +798,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			}
 		}
 
-		if (!solutionFound && !frontier.empty())
+		if (!SolutionFound && !frontier.empty())
 		{
 			current_node = frontier.front();
 			while (!frontier.empty() && explored.find(current_node) != explored.end())
@@ -810,7 +810,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 		}
 	}
 
-	if (solutionFound)
+	if (SolutionFound)
 	{
 		plan = current_node.secuencia;
 		cout << "Encontrado un plan: ";
