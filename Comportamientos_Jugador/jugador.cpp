@@ -155,62 +155,6 @@ void ComportamientoJugador::VisualizaPlan(const stateN0 &st, const list<Action> 
 		it++;
 	}
 }
-void ComportamientoJugador::VisualizaPlanN1(const stateN1 &st, const list<Action> &plan)
-{
-	AnulaMatriz(mapaConPlan);
-	stateN1 cst = st;
-
-	auto it = plan.begin();
-
-	while (it != plan.end())
-	{
-		if ((*it != act_CLB_WALK) && (*it != act_CLB_TURN_SR) && (*it != act_CLB_STOP))
-		{
-			switch (cst.ultimaOrdenColaborador)
-			{
-			case act_CLB_WALK:
-				cst.colaborador = NextCasilla(cst.colaborador);
-				mapaConPlan[cst.colaborador.f][cst.colaborador.c] = 2;
-				break;
-			case act_CLB_TURN_SR:
-				cst.colaborador.brujula = (Orientacion)((cst.colaborador.brujula + 1) % 8);
-				break;
-			}
-		}
-		switch (*it)
-		{
-		case actRUN:
-			cst.jugador = NextCasilla(cst.jugador);
-			mapaConPlan[cst.jugador.f][cst.jugador.c] = 3;
-			cst.jugador = NextCasilla(cst.jugador);
-			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
-			break;
-		case actWALK:
-			cst.jugador = NextCasilla(cst.jugador);
-			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
-			break;
-		case actTURN_SR:
-			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 1) % 8);
-			break;
-		case actTURN_L:
-			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 6) % 8);
-			break;
-		case act_CLB_WALK:
-			cst.colaborador = NextCasilla(cst.colaborador);
-			cst.ultimaOrdenColaborador = act_CLB_WALK;
-			mapaConPlan[cst.colaborador.f][cst.colaborador.c] = 2;
-			break;
-		case act_CLB_TURN_SR:
-			cst.colaborador.brujula = (Orientacion)((cst.colaborador.brujula + 1) % 8);
-			cst.ultimaOrdenColaborador = act_CLB_TURN_SR;
-			break;
-		case act_CLB_STOP:
-			cst.ultimaOrdenColaborador = act_CLB_STOP;
-			break;
-		}
-		it++;
-	}
-}
 
 void PintaPlan(const list<Action> &plan)
 {
@@ -342,7 +286,62 @@ list<Action> AnchuraSoloJugador(const stateN0 &inicio, const ubicacion &final, c
 	return plan;
 }
 // NIVEL 1
+void ComportamientoJugador::VisualizaPlanN1(const stateN1 &st, const list<Action> &plan)
+{
+	AnulaMatriz(mapaConPlan);
+	stateN1 cst = st;
 
+	auto it = plan.begin();
+
+	while (it != plan.end())
+	{
+		if ((*it != act_CLB_WALK) && (*it != act_CLB_TURN_SR) && (*it != act_CLB_STOP))
+		{
+			switch (cst.ultimaOrdenColaborador)
+			{
+			case act_CLB_WALK:
+				cst.colaborador = NextCasilla(cst.colaborador);
+				mapaConPlan[cst.colaborador.f][cst.colaborador.c] = 2;
+				break;
+			case act_CLB_TURN_SR:
+				cst.colaborador.brujula = (Orientacion)((cst.colaborador.brujula + 1) % 8);
+				break;
+			}
+		}
+		switch (*it)
+		{
+		case actRUN:
+			cst.jugador = NextCasilla(cst.jugador);
+			mapaConPlan[cst.jugador.f][cst.jugador.c] = 3;
+			cst.jugador = NextCasilla(cst.jugador);
+			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
+			break;
+		case actWALK:
+			cst.jugador = NextCasilla(cst.jugador);
+			mapaConPlan[cst.jugador.f][cst.jugador.c] = 1;
+			break;
+		case actTURN_SR:
+			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 1) % 8);
+			break;
+		case actTURN_L:
+			cst.jugador.brujula = (Orientacion)((cst.jugador.brujula + 6) % 8);
+			break;
+		case act_CLB_WALK:
+			cst.colaborador = NextCasilla(cst.colaborador);
+			cst.ultimaOrdenColaborador = act_CLB_WALK;
+			mapaConPlan[cst.colaborador.f][cst.colaborador.c] = 2;
+			break;
+		case act_CLB_TURN_SR:
+			cst.colaborador.brujula = (Orientacion)((cst.colaborador.brujula + 1) % 8);
+			cst.ultimaOrdenColaborador = act_CLB_TURN_SR;
+			break;
+		case act_CLB_STOP:
+			cst.ultimaOrdenColaborador = act_CLB_STOP;
+			break;
+		}
+		it++;
+	}
+}
 bool ColaboradorVisible(const ubicacion &j, const ubicacion &c)
 {
 	switch (j.brujula)
@@ -612,6 +611,23 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 	stateN1 st_result = st;
 	ubicacion sig_ubicacion, sig_ubicacion2;
 
+// Aplicar la última acción del colaborador si aún está en rango
+	if ( a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
+	{
+		switch (st_result.ultimaOrdenColaborador)
+		{
+		case act_CLB_WALK:
+			sig_ubicacion = NextCasilla(st_result.colaborador);
+			if (casillaLibreYTransitable(sig_ubicacion, st.jugador, mapa))
+			{
+				st_result.colaborador = sig_ubicacion;
+			}
+			break;
+		case act_CLB_TURN_SR:
+			st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
+			break;
+		}
+	}
 	// Acciones del jugador
 	switch (a)
 	{
@@ -671,23 +687,6 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		break;
 	}
 
-	// Aplicar la última acción del colaborador si aún está en rango
-	if (ColaboradorVisible(st_result.jugador, st_result.colaborador) && a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
-	{
-		switch (st_result.ultimaOrdenColaborador)
-		{
-		case act_CLB_WALK:
-			sig_ubicacion = NextCasilla(st_result.colaborador);
-			if (casillaLibreYTransitable(sig_ubicacion, st.jugador, mapa))
-			{
-				st_result.colaborador = sig_ubicacion;
-			}
-			break;
-		case act_CLB_TURN_SR:
-			st_result.colaborador.brujula = static_cast<Orientacion>((st_result.colaborador.brujula + 1) % 8);
-			break;
-		}
-	}
 
 	return st_result;
 }
@@ -726,7 +725,7 @@ list<Action> AnchuraNivel1(const stateN1 &inicio, const ubicacion &final, const 
 			{
 				current_node = hijo;
 				SolutionFound = true;
-				break; // Salir del bucle, ya que se alcanzó el objetivo
+				break;
 			}
 
 			// Si no se alcanzó el objetivo, considerar añadir el estado a la frontera
@@ -831,7 +830,7 @@ stateN2 applyN2(const Action &a, const stateN2 &st, const vector<vector<unsigned
 			if (casillaLibreYTransitable(sig_ubicacion2, st.colaborador, mapa))
 			{
 				st_result.jugador = sig_ubicacion2;
-				actualizaItems(st_result, sig_ubicacion, mapa);
+				actualizaItems(st_result, sig_ubicacion2, mapa);
 			}
 		}
 		break;
