@@ -885,7 +885,6 @@ stateN2 applyN2(const Action &a, const stateN2 &st, const vector<vector<unsigned
 		if (casillaLibreYTransitable(sig_ubicacion, st.colaborador, mapa))
 		{
 			sig_ubicacion2 = NextCasilla(sig_ubicacion);
-			actualizaItems(st_result, sig_ubicacion, mapa);
 			if (casillaLibreYTransitable(sig_ubicacion2, st.colaborador, mapa))
 			{
 				st_result.jugador = sig_ubicacion2;
