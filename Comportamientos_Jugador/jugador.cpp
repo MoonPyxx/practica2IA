@@ -519,8 +519,6 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 {
 	stateN1 st_result = st;
 	ubicacion sig_ubicacion, sig_ubicacion2;
-
-	// Aplicar la última acción del colaborador si aún está en rango
 	if (a != act_CLB_WALK && a != act_CLB_TURN_SR && a != act_CLB_STOP)
 	{
 		switch (st_result.ultimaOrdenColaborador)
@@ -537,7 +535,6 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 			break;
 		}
 	}
-	// Acciones del jugador
 	switch (a)
 	{
 	case actWALK:
@@ -567,7 +564,6 @@ stateN1 applyN1(const Action &a, const stateN1 &st, const vector<vector<unsigned
 		st_result.jugador.brujula = static_cast<Orientacion>((st.jugador.brujula + 1) % 8);
 		break;
 
-	// Acciones del colaborador
 	case act_CLB_WALK:
 		sig_ubicacion = NextCasilla(st.colaborador);
 		if (casillaLibreYTransitable(sig_ubicacion, st.jugador, mapa))
@@ -905,7 +901,7 @@ list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final
 	}
 	if (SolutionFound)
 	{
-		plan = current_node.secuencia; // Devolvemos la secuencia de acciones hacia la solucion
+		plan = current_node.secuencia; 
 		PintaPlan(current_node.secuencia);
 	}
 	return plan;
