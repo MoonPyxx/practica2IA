@@ -344,44 +344,135 @@ void ComportamientoJugador::VisualizaPlanN1(const stateN1 &st, const list<Action
 }
 bool ColaboradorVisible(const ubicacion &j, const ubicacion &c)
 {
-	bool colaborador = false;
 	switch (j.brujula)
 	{
 	case norte:
-		for (int i = -1; i >= -3 && !colaborador; i--)
-		{
-			for (int k = -i; k >= i && !colaborador; k--)
-			{
-				colaborador = ((j.f + i) == c.f) && ((j.c + k) == c.c);
-			}
-		}
-		break;
-	case sur:
-		for (int i = 1; i <= 3 && !colaborador; i++)
-		{
-			for (int k = i; k >= -i && !colaborador; k--)
-			{
-				colaborador = (j.f + i) == c.f && (j.c + k) == c.c;
-			}
-		}
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
 		break;
 	case este:
-		for (int i = 1; i <= 3 && !colaborador; i++)
-		{
-			for (int k = -i; k <= i && !colaborador; k++)
-			{
-				colaborador = (j.f + k) == c.f && (j.c + i) == c.c;
-			}
-		}
+		if ((j.f - 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		break;
+	case sur:
+		if ((j.f + 1) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 3) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c + 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
 		break;
 	case oeste:
-		for (int i = -1; i >= -3 && !colaborador; i--)
-		{
-			for (int k = -i; k >= i && !colaborador; k--)
-			{
-				colaborador = (j.f + k) == c.f && (j.c + i) == c.c;
-			}
-		}
+		if ((j.f + 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 1) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 2) == c.c)
+			return true;
+		if ((j.f + 3) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f + 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 1) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 2) == c.f && (j.c - 3) == c.c)
+			return true;
+		if ((j.f - 3) == c.f && (j.c - 3) == c.c)
+			return true;
 		break;
 	case noroeste:
 		if ((j.f) == c.f && (j.c - 1) == c.c)
@@ -901,7 +992,7 @@ list<Action> DijkstraCosteUniforme(const stateN2 &inicio, const ubicacion &final
 	}
 	if (SolutionFound)
 	{
-		plan = current_node.secuencia; 
+		plan = current_node.secuencia;
 		PintaPlan(current_node.secuencia);
 	}
 	return plan;
